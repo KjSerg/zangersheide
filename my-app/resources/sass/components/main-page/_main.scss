@@ -1,0 +1,107 @@
+.main {
+  &-section{
+    padding: 1rem;
+  }
+  &-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    &__button{
+      margin-left: 2rem;
+    }
+    &__bottom{
+      display: flex;
+      align-items: flex-end;
+      @media (max-width: 1500px) {
+        flex-direction: column;
+      }
+    }
+    &__title{
+      margin-right: auto;
+      width: 100%;
+      max-width: 38rem;
+      color: #FFF;
+      font-family: "Titillium Web", sans-serif;
+      font-size: 3.5rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 160%; /* 5.6rem */
+      letter-spacing: -0.035rem;
+      text-transform: uppercase;
+      @media (max-width: 1500px) {
+        margin-bottom: 2rem;
+      }
+      @media (max-width: 1100px) {
+        font-size: 3rem;
+      }
+      @media (max-width: 380px) {
+        font-size: 2.6rem;
+      }
+    }
+    &__item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 6rem;
+      width: 92rem;
+      height: 85.5rem;
+      margin: 1rem;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      & > *{
+        position: relative;
+      }
+      &:after {
+        position: absolute;
+        content: '';
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.17;
+        background: lightgray 0% 0% / 100px 100px repeat;
+      }
+      @media (min-width: 1921px) {
+        width: 48%;
+      }
+      @media (max-width: 1899px) {
+        width: 48%;
+      }
+      @media (max-width: 1640px) {
+        padding: 6rem 2rem;
+      }
+      @media (max-width: 1500px) {
+        height: 62rem;
+      }
+      @media (max-width: 1100px) {
+        padding:  2rem;
+        height: 50rem;
+      }
+      @media (max-width: 920px) {
+        width: 100%;
+      }
+      @media (max-width: 450px) {
+        height: 40rem;
+      }
+      @media (max-width: 380px) {
+        height: 36rem;
+      }
+    }
+    &__head{
+      width: 100%;
+      margin-bottom: auto;
+      color: #FFF;  font-family: "Inter", sans-serif;
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 180%;
+      em {
+        display: block;
+        font-style: italic;
+      }
+    }
+  }
+}

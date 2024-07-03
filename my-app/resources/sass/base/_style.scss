@@ -1,12 +1,17 @@
 html {
   font-size: 10px;
+  @media (max-width: 1200px) {
+    font-size: 9px;
+  }
 }
 body {
+  background: #FFF;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
   font-variation-settings: "slnt" 0;
+
 }
 
 img, svg {
@@ -73,34 +78,40 @@ img.cover {
   object-fit: cover;
 }
 
-.language-switcher {
-  margin-left: 5rem;
+
+section {
   position: relative;
-  color: #292929;
-  font-family: Inter;
-  font-size: 1.3rem;
+}
+
+.button {
+  display: flex;
+  min-width: 26rem;
+  background: #092939;
+  padding: 1.6rem 2rem;
+  justify-content: center;
+  align-items: center;
+  color: #FFF;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  font-size: 1.6rem;
   font-style: normal;
-  font-weight: 500;
-  line-height: 160%;
-  text-transform: uppercase;
-  &-list {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
+  font-weight: 400;
+  line-height: 175%;
+  transition: 0.5s ease;
+  &:hover {
+    background-color: #184155;
   }
-  &-current{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .icon {
-      display: flex;
-      margin-right: 0.8rem;
-      width: 1.7rem;
-      height: 1.7rem;
-      flex-grow: 0;
-      flex-shrink: 0;
-    }
+}
+
+em, i  {
+  font-style: italic;
+}
+
+.container {
+  width: 100%;
+  max-width: 153rem;
+  margin: 0 auto;
+  @media (max-width: 1530px) {
+    padding: 0 1.6rem;
   }
 }
