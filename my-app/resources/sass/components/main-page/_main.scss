@@ -1,12 +1,18 @@
 .main {
   &-section{
     padding: 1rem;
+    @media (min-height: 1081px) {
+      height: calc(100% - 2rem);
+    }
   }
   &-items {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    @media (min-height: 1081px) {
+      height: 100%;
+    }
     &__button{
       margin-left: 2rem;
     }
@@ -63,6 +69,9 @@
         height: 100%;
         opacity: 0.17;
         background: lightgray 0% 0% / 100px 100px repeat;
+      }
+      @media (min-height: 1081px) {
+        height: 100%;
       }
       @media (min-width: 1921px) {
         width: 48%;

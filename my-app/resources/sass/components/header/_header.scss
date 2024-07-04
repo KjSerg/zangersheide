@@ -42,6 +42,9 @@
     @media (max-width: 1200px) {
       margin-right: 2rem;
     }
+    @media (max-width: 360px) {
+      margin-right: 1rem;
+    }
 
     &-input {
       width: 100%;
@@ -146,6 +149,8 @@
 
       @media (max-width: 1024px) {
         text-align: right;
+        display: block;
+        padding: 1rem;
       }
     }
 
@@ -170,6 +175,9 @@
         opacity: 1;
         pointer-events: auto;
       }
+      @media (max-width: 460px) {
+        width: 100%;
+      }
     }
   }
 }
@@ -191,9 +199,11 @@
   @media (max-width: 500px) {
     margin-left: 0;
   }
-
   &-list {
     position: absolute;
+    margin: 0 -1rem;
+    z-index: 1;
+    background-color: #fff;
     top: 100%;
     left: 0;
     width: 100%;
@@ -202,7 +212,6 @@
     transform: translateY(1rem);
     transition: 0.5s ease;
   }
-
   &-current {
     display: flex;
     align-items: center;
@@ -219,7 +228,6 @@
     }
 
   }
-
   &:hover {
     .language-switcher-list {
       opacity: 1;
@@ -230,6 +238,10 @@
     .icon {
       transform: rotate(180deg);
     }
+  }
+  a {
+    display: block;
+    padding: 1rem;
   }
 }
 

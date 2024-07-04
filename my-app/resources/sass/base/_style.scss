@@ -5,6 +5,9 @@ html {
   }
 }
 body {
+  display: flex;
+  flex-direction: column;
+
   background: #FFF;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
@@ -12,6 +15,15 @@ body {
   font-style: normal;
   font-variation-settings: "slnt" 0;
 
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+main.content{
+  flex: 1;
 }
 
 img, svg {
