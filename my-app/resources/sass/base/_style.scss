@@ -4,6 +4,7 @@ html {
     font-size: 9px;
   }
 }
+
 body {
   display: flex;
   flex-direction: column;
@@ -22,7 +23,7 @@ html, body {
   margin: 0;
 }
 
-main.content{
+main.content {
   flex: 1;
 }
 
@@ -70,9 +71,11 @@ img, svg {
   opacity: 1;
   z-index: 20;
 }
+
 input {
   width: 100%;
 }
+
 input.error, textarea.error {
   border-color: red;
   outline: none;
@@ -89,7 +92,6 @@ img.cover {
   height: 100%;
   object-fit: cover;
 }
-
 
 section {
   position: relative;
@@ -110,12 +112,27 @@ section {
   font-weight: 400;
   line-height: 175%;
   transition: 0.5s ease;
+
   &:hover {
-    background-color: #184155;
+    background-color: #216A8F;
+  }
+
+  &-favorites {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.9rem;
+    width: 5.8rem;
+    height: 5.8rem;
+    flex-shrink: 0;
+    background: #216A8F;
+    &:hover {
+      background-color: #092939;
+    }
   }
 }
 
-em, i  {
+em, i {
   font-style: italic;
 }
 
@@ -125,5 +142,69 @@ em, i  {
   margin: 0 auto;
   @media (max-width: 1530px) {
     padding: 0 1.6rem;
+  }
+}
+
+.breadcrumbs {
+  margin-bottom: 4rem;
+  color: #FFF;
+  font-family: "Inter", sans-serif;
+  font-size: 1.4rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  & > * {
+    position: relative;
+    display: inline-block;
+    &:not(:last-child) {
+      margin-right: 1.3rem;
+      padding-right: 1.3rem;
+      &:after {
+        position: absolute;
+        right: 0;
+        top: 0;
+        content: '/';
+        display: inline-block;
+      }
+    }
+  }
+  a {
+    color: #FFF;
+    font-family: "Inter", sans-serif;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    opacity: 0.6;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.title {
+  color: #292929;
+  font-family: "Titillium Web", sans-serif;
+  font-size: 4rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 160%;
+  letter-spacing: -0.04rem;
+  text-transform: uppercase;
+
+  @media (max-width: 414px){
+    font-size: 3rem;
+  }
+}
+
+.text{
+  color: #61667C;
+  font-family: "Inter", sans-serif;
+  font-size: 1.6rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 175%;
+  & > *{
+    margin-bottom: 2rem;
   }
 }

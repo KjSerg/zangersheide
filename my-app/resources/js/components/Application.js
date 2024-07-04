@@ -1,4 +1,5 @@
 import {burger} from "./_burger";
+import Slick from "./Slick";
 
 export default class Application {
     constructor() {
@@ -19,6 +20,6 @@ export default class Application {
     }
 
     initPlugins() {
-
+        const sliders = new Slick();
     }
 }

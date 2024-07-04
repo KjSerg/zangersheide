@@ -1,0 +1,144 @@
+.single-about {
+
+  display: flex;
+  align-items: center;
+  @media (max-width: 730px){
+   flex-direction: column;
+  }
+  &-content {
+    width: 100%;
+    max-width: 53rem;
+    margin-right: 8rem;
+
+    @media (max-width: 930px){
+      margin-right: 4rem;
+    }
+    @media (max-width: 730px){
+      max-width: 100%;
+      margin-right: 0;
+      margin-bottom: 4rem;
+    }
+  }
+
+  &-section {
+    padding: 12.5rem 0;
+    background: rgba(215, 221, 234, 0.25);
+    overflow: hidden;
+    @media (max-width: 730px){
+      padding: 4rem 0;
+    }
+  }
+
+  &__title {
+    margin-bottom: 2.5rem;
+  }
+
+  &__text {
+    &:not(:last-child) {
+      margin-bottom: 4.5rem;
+    }
+
+  }
+  &__controls {
+    display: flex;
+    @media (max-width: 730px){
+      //justify-content:  center;
+    }
+  }
+  &__button{
+    text-transform: uppercase;
+  }
+  &-gallery {
+    position: absolute;
+    left: 46.5%;
+    @media (max-width: 1980px){
+      left: 41.5%;
+    }
+    @media (max-width: 1400px){
+      left: 45%;
+    }
+    @media (max-width: 1250px){
+      left: 54%;
+    }
+
+    display: flex;
+    width: 124rem;
+    flex-grow: 0;
+    flex-shrink: 0;
+    @media (max-width: 1400px){
+      width: 84rem;
+    }
+    @media (max-width: 930px){
+      position: static;
+      width: 42rem;
+    }
+    @media (max-width: 730px){
+      width: 100%;
+    }
+  }
+  &__image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42rem;
+    height: 58rem;
+    padding: 0 1rem;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    @media (max-width: 730px){
+      width: 100%;
+      height: auto;
+      padding: 0;
+    }
+  }
+  .slick-prev {
+    z-index: 1;
+    @media (max-width: 730px){
+      bottom:  0;
+      top: auto;
+      left: 3rem;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background-color: #216A8F;
+      &:before {
+        content: '❮';
+        color: #fff;
+      }
+    }
+
+  }
+  .slick-next {
+    right: 42.5rem;
+    @media (max-width: 1400px){
+      right: 60rem;
+    }
+    @media (max-width: 1250px){
+      right: 40rem;
+    }
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: #216A8F;
+
+    @media (max-width: 930px){
+      right: 38rem;
+    }
+    @media (max-width: 730px){
+      bottom:  0;
+      top: auto;
+      right: 3rem;
+      width: 4rem;
+      height: 4rem;
+    }
+    &:before {
+      content: '❯';
+      color: #fff;
+    }
+  }
+}
