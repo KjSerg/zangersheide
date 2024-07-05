@@ -1,0 +1,40 @@
+.tabs {
+  &-head {
+    display: flex;
+    flex-wrap: wrap;
+    &__item{
+      display: inline-flex;
+      padding: 2rem 2.5rem;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(#216A8F, 0);
+      color: #61667C;
+      text-align: center;
+      font-family: "Inter", sans-serif;
+      font-size: 1.3rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 140%;
+      letter-spacing: 0.065rem;
+      text-transform: uppercase;
+      transition: 0.5s ease;
+      @media (max-width: 360px){
+        padding: 2rem;
+      }
+      &:hover{
+        background: rgba(#216A8F, 0.4);
+      }
+      &.active {
+        background: rgba(#216A8F, 1);
+        color: #FFF;
+      }
+    }
+  }
+  &-content{
+    display: none;
+    &.active {
+      display: block;
+    }
+  }
+}

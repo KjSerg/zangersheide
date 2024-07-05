@@ -16,8 +16,11 @@
     "sass-loader": "^12.6.0"
   },
   "dependencies": {
+    "@fancyapps/fancybox": "^3.5.7",
     "browser-sync-webpack-plugin": "^2.3.0",
+    "fancybox": "^3.0.1",
     "jquery": "^3.7.1",
+    "selectric": "^1.13.0",
     "slick-carousel": "^1.8.1",
     "slick-slider": "^1.8.2"
   }

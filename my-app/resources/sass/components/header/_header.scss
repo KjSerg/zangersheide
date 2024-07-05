@@ -90,6 +90,7 @@
 
   &-list {
     display: flex;
+    align-items: center;
   }
 
   &-menu {
@@ -183,6 +184,9 @@
 }
 
 .language-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 5rem;
   position: relative;
   color: #292929;

@@ -1,0 +1,93 @@
+.news {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  &-item {
+    display: flex;
+    flex-direction: column;
+    width: 49rem;
+    padding-bottom: 3rem;
+    color: #61667C;
+    font-family: "Inter", sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 175%;
+    @media (max-width: 1530px) {
+      width: 32%;
+    }
+
+    @media (max-width: 900px) {
+      width: 49%;
+    }
+    @media (max-width: 440px) {
+      width: 100%;
+    }
+    &-list {
+      margin-bottom: 1.5rem;
+      color: #61667C;
+      font-size: 1.6rem;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 175%;
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      li {
+        position: relative;
+
+        &:not(:last-child) {
+          margin-right: 2.2rem;
+          padding-right: 2.4rem;
+          @media (max-width: 550px) {
+            margin-right: 1rem;
+            padding-right: 1.2rem;
+          }
+          &:after {
+            content: '•';
+            position: absolute;
+            display: block;
+            top: 50%;
+            transform: translateY(-50%) translateX(50%);
+            right: 0;
+          }
+        }
+      }
+    }
+    &__image {
+      width: 100%;
+      height: 38rem;
+      margin-bottom: 3.5rem;
+      flex-shrink: 0;
+      @media (max-width: 1530px) {
+        height: auto;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    &__title{
+      margin-bottom: 1rem;
+      color: #292929;
+      font-family: "Titillium Web", sans-serif;
+      font-size: 1.9rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 145%;
+      text-transform: uppercase;
+    }
+    &__description{
+      margin-top: auto;
+      margin-bottom: 2.5rem;
+    }
+    &__link {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
+}

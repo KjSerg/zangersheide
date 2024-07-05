@@ -75,6 +75,11 @@
     @media (max-width: 730px){
       width: 100%;
     }
+    &:hover {
+      .slick-next {
+        opacity: 1;
+      }
+    }
   }
   &__image {
     display: flex;
@@ -96,7 +101,9 @@
   }
   .slick-prev {
     z-index: 1;
+    display: none;
     @media (max-width: 730px){
+      display: block;
       bottom:  0;
       top: auto;
       left: 3rem;
@@ -113,6 +120,7 @@
 
   }
   .slick-next {
+    opacity: 0;
     right: 42.5rem;
     @media (max-width: 1400px){
       right: 60rem;
@@ -130,6 +138,7 @@
       right: 38rem;
     }
     @media (max-width: 730px){
+      opacity: 1;
       bottom:  0;
       top: auto;
       right: 3rem;

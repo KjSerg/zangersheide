@@ -1,0 +1,73 @@
+.modal-window {
+  display: none;
+  font-family: "Inter", sans-serif;
+  width: 100%;
+  max-width: 85rem;
+  max-height: 100vh;
+  overflow: auto;
+  background: #F5F6FA;
+  &__title {
+    display: block;
+    padding: 3.5rem;
+    border-bottom: 1px solid rgba(97, 102, 124, 0.10);
+    color: #292929;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 1.9rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 145%;
+    text-transform: uppercase;
+    @media (max-width: 720px){
+      padding: 1.5rem;
+    }
+  }
+  &.open {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .close-modal {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 1rem;
+    top: 1rem;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    font-size: 3rem;
+  }
+}
+
+.order {
+  &-window {
+    .form-group {
+      @media (max-width: 630px){
+        width: 100%;
+        margin-right: 0;
+        &.third{
+          width: 100%;
+          margin-right: 0;
+        }
+      }
+
+    }
+
+    .form-controls .button {
+      @media (max-width: 380px){
+        width: 100%;
+      }
+    }
+
+  }
+  &-form {
+    padding: 3.5rem;
+    padding-top: 1.5rem;
+    @media (max-width: 720px){
+      padding: 1.5rem;
+    }
+  }
+}

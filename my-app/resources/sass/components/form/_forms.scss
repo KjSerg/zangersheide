@@ -1,0 +1,160 @@
+.form {
+  font-family: "Inter", sans-serif;
+
+  &-group {
+    width: 100%;
+
+    margin-bottom: 1.5rem;
+
+    &:not(:last-child) {
+      margin-right: 1%;
+    }
+
+    &__title {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #292929;
+      font-size: 1.2rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    &.third {
+      width: 31%;
+
+      &:not(:nth-child(3n)) {
+        margin-right: 3%;
+      }
+    }
+  }
+
+  &-row {
+    display: flex;
+    flex-wrap: wrap;
+
+  }
+
+  &-item {
+
+    &:not(:last-child) {
+
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(97, 102, 124, 0.10);
+    }
+
+
+    &__title {
+      margin-bottom: 1.5rem;
+      color: #292929;
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 175%; /* 2.8rem */
+    }
+  }
+
+
+  &-controls {
+
+
+    color: #61667C;
+
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 400;
+
+    a {
+      color: #216A8F;
+      font-size: 1.4rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-decoration-line: underline;
+    }
+
+    & > *:not(:last-child) {
+      margin-bottom: 1.5rem;
+    }
+
+    .button {
+      margin-top: 5rem;
+    }
+  }
+
+  &-checkbox-container {
+    display: flex;
+    line-height: 2.7rem;
+
+    & > * {
+      display: inline-block;
+    }
+
+    a {
+      margin: 0 5px;
+      line-height: 2.7rem;
+    }
+  }
+
+  input[type="checkbox"] + .icon {
+    margin-right: 1.5rem;
+    width: 2.7rem;
+    height: 2.7rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 1px solid rgba(97, 102, 124, 0.30);
+    background: #FFF;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+}
+
+input {
+  width: 100%;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  border: 1px solid rgba(97, 102, 124, 0.20);
+  background: #FFF;
+  color: #61667C;
+  font-family: "Inter", sans-serif;
+  font-size: 1.4rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+
+  &::placeholder {
+    color: #61667C;
+    font-family: "Inter", sans-serif;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  &.error {
+    border-color: red;
+  }
+}
+
+.selectric {
+  border: 1px solid rgba(97, 102, 124, 0.20);
+  background: #FFF;
+
+  .label {
+    height: 4.7rem;
+    line-height: 4.7rem;
+    color: #61667C;
+    font-family: "Inter", sans-serif;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .button {
+    min-width: auto !important;
+    height: 4.7rem;
+    background: #FFF;
+  }
+}
