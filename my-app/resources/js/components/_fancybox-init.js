@@ -1,5 +1,4 @@
 export function fancyboxInit() {
-    console.log(1)
     $(document).on('click', '.close-modal', function (e) {
         closeModal();
     });
@@ -12,19 +11,20 @@ export function fancyboxInit() {
         if ($el.length === 0) return;
         openModal($el);
     });
-    document.addEventListener('keydown', function(e) {
-        if( e.keyCode == 27 ){
+    document.addEventListener('keydown', function (e) {
+        if (e.keyCode == 27) {
             closeModal();
         }
     });
-    $(document).mouseup( function(e){
-        var div = $( ".modal-window.open" );
-        if ( !div.is(e.target)
-            && div.has(e.target).length === 0 ) {
+    $(document).mouseup(function (e) {
+        var div = $(".modal-window.open");
+        if (!div.is(e.target)
+            && div.has(e.target).length === 0) {
             closeModal();
         }
     });
 }
+
 
 export function openModal($el) {
     if ($el.length === 0) return;
@@ -36,4 +36,7 @@ export function openModal($el) {
 export function closeModal($el = $(document).find('.modal-window.open')) {
     $el.removeClass('open');
     $('body').removeClass('open-modal');
+    if ($el.hasClass('player-window')) {
+        $el.html('');
+    }
 }

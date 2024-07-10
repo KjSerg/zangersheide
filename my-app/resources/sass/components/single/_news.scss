@@ -14,9 +14,12 @@
       display: block;
       top: 0;
       left: 0;
-      width: 55.5rem;
+      width: 40%;
       height: 29rem;
       background: #092939;
+      @media (max-width: 1920px){
+        width: 29%;
+      }
       @media (max-width: 630px){
         width: 68%;
       }
@@ -27,6 +30,7 @@
     }
 
     &-title {
+      margin-bottom: 4.5rem;
       color: #FFF;
       font-family: "Titillium Web", sans-serif;
       font-size: 4rem;

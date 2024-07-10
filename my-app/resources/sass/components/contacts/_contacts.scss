@@ -1,0 +1,194 @@
+.contacts {
+  display: flex;
+  align-items: center;
+  @media (max-width: 767px){
+    flex-direction: column;
+  }
+  &-section {
+    padding-top: 3.5rem;
+    padding-bottom: 12.5rem;
+    background: #FFF;
+  }
+  &-text {
+    margin-right: 13rem;
+    width: 100%;
+    max-width: 39rem;
+    @media (max-width: 1440px){
+      max-width: 49%;
+    }
+    @media (max-width: 1024px){
+      margin-right: 4rem;
+    }
+    @media (max-width: 767px){
+      margin-right: 0;
+      margin-bottom: 2rem;
+      max-width: 100%;
+    }
+  }
+  &__title {
+    margin-bottom: 2.5rem;
+    color: #292929;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 160%; /* 6.4rem */
+    letter-spacing: -0.04rem;
+    text-transform: uppercase;
+    @media (max-width: 767px){
+      font-size: 2.6rem;
+    }
+  }
+  &__text {
+    color: #61667C;
+    font-family: "Inter", sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 175%; /* 2.8rem */
+  }
+  &-map {
+    width: 101rem;
+    height: 43.5rem;
+    flex-shrink: 0;
+    @media (max-width: 1440px){
+      width: 50%;
+    }
+    @media (max-width: 767px){
+      width: 100%;
+    }
+  }
+}
+
+.social {
+  &-network {
+    color: #216A8F;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 165%;
+    text-transform: uppercase;
+    &:hover{
+      color: #292929;
+    }
+    &-item {
+      margin-bottom: 1rem;
+      &:not(:last-child){
+        margin-right: 2rem;
+      }
+    }
+  }
+  &-networks {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+
+  }
+}
+
+.contact {
+  &-section {
+    padding: 12.5rem 0;background: rgba(215, 221, 234, 0.25);
+    @media (max-width: 690px){
+      padding: 4rem 0;
+    }
+  }
+  &__title {
+    &:not(:last-child){
+      margin-bottom: 2rem;
+    }
+    color: #292929;
+    text-align: center;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 160%; /* 6.4rem */
+    letter-spacing: -0.04rem;
+    text-transform: uppercase;
+    @media (max-width: 690px){
+      font-size: 2.8rem;
+    }
+  }
+  &__subtitle {
+    &:not(:last-child){
+      margin-bottom: 4.5rem;
+    }
+    color: #61667C;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 175%; /* 2.8rem */
+  }
+  &-form {
+    width: 128rem;
+    margin: 0 auto;
+    color: #61667C;
+    font-family: "Inter", sans-serif;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    @media (max-width: 1350px){
+      width: 100%;
+    }
+    a {
+      color: #4578FF;
+      font-family: "Inter", sans-serif;
+      font-size: 1.4rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-decoration-line: underline;
+    }
+    .button {
+      display: flex;
+      width: 41rem;
+      max-width: 32%;
+      padding: 2rem 2.5rem;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      line-height: 30%;
+      @media (max-width: 690px){
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+    &-label {
+      width: 41rem;
+      max-width: 32%;
+      margin-right: 2rem;
+      input {
+        width: 100%;
+        border: 1px solid rgba(97, 102, 124, 0.20);
+        background: #FFF;
+        color: #61667C;
+        font-family: "Inter", sans-serif;
+        font-size: 1.4rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
+      @media (max-width: 690px){
+        width: 100%;
+        max-width: 100%;
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+    }
+    &-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      @media (max-width: 690px){
+        flex-direction: column;
+      }
+    }
+  }
+}

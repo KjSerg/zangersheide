@@ -18,7 +18,7 @@
     line-height: 145%;
     text-transform: uppercase;
     @media (max-width: 720px){
-      padding: 1.5rem;
+      padding: 3.5rem;
     }
   }
   &.open {
@@ -34,7 +34,7 @@
     align-items: center;
     justify-content: center;
     right: 1rem;
-    top: 1rem;
+    top: 4rem;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
@@ -44,6 +44,7 @@
 
 .order {
   &-window {
+
     .form-group {
       @media (max-width: 630px){
         width: 100%;

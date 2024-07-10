@@ -1,0 +1,112 @@
+.highlights {
+  &-section {
+    padding-top: 12.5rem;
+    padding-bottom: 10.5rem;
+    background: rgba(215, 221, 234, 0.25);
+    @media (max-width: 767px){
+      padding: 4rem 0;
+    }
+  }
+  &-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4.5rem;
+    @media (max-width: 767px){
+      //flex-direction: column;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 480px){
+      flex-direction: column;
+    }
+  }
+  &__title {
+    &:not(:last-child){
+      margin-right: 2rem;
+    }
+    color: #292929;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 160%; /* 6.4rem */
+    letter-spacing: -0.04rem;
+    text-transform: uppercase;
+    @media (max-width: 767px){
+      font-size: 2.8rem;
+    }
+  }
+  &-list {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    @media (max-width: 767px){
+      justify-content: space-around;
+    }
+  }
+  &-item {
+    width: 49rem;
+    max-width: 32%;
+    padding: 3rem;
+    border: 1px solid rgba(97, 102, 124, 0.10);
+    background: #FFF;
+    margin-bottom: 2rem;
+    @media (max-width: 992px){
+      padding: 1.4rem;
+    }
+    @media (max-width: 767px){
+      max-width: 49%;
+    }
+    @media (max-width: 480px){
+      max-width: 100%;
+    }
+    &__text {
+      color: #61667C;
+      font-family: "Inter", sans-serif;
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 175%; /* 2.8rem */
+    }
+    &__icon {
+      margin-bottom: 4.5rem;
+      @media (max-width: 992px){
+        margin-bottom: 2.5rem;
+      }
+      &:last-child{
+        margin-bottom: 0;
+      }
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      width: 7rem;
+      height: 7rem;
+      flex-shrink: 0;
+      background-color: #092939;
+      border-radius: 50%;
+    }
+    &__title {
+      margin-bottom: 1.5rem;
+      &:last-child{
+        margin-bottom: 0;
+      }
+      color: #292929;
+      font-family: "Titillium Web", sans-serif;
+      font-size: 1.9rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 145%; /* 2.755rem */
+      text-transform: uppercase;
+      em {
+        display: inline-block;
+        margin-right: 1.5rem;
+        color: #216A8F;
+        font-style: italic;
+        @media (max-width: 992px){
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+}

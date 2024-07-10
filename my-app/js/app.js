@@ -31,7 +31,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_tabs */ "./resources/js/components/_tabs.js");
 /* harmony import */ var _selectric_init__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_selectric-init */ "./resources/js/components/_selectric-init.js");
 /* harmony import */ var _Slick__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Slick */ "./resources/js/components/Slick.js");
-/* harmony import */ var _fancybox_init__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./_fancybox-init */ "./resources/js/components/_fancybox-init.js");
+/* harmony import */ var _YoutubePlayer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./YoutubePlayer */ "./resources/js/components/YoutubePlayer.js");
+/* harmony import */ var _fancybox_init__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./_fancybox-init */ "./resources/js/components/_fancybox-init.js");
+/* harmony import */ var _map_init__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./_map-init */ "./resources/js/components/_map-init.js");
+/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./_accordion */ "./resources/js/components/_accordion.js");
+/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_accordion__WEBPACK_IMPORTED_MODULE_8__);
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
@@ -39,6 +43,9 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+
 
 
 
@@ -65,17 +72,54 @@ var Application = /*#__PURE__*/function () {
   }, {
     key: "initComponents",
     value: function initComponents() {
+      var _this = this;
       (0,_burger__WEBPACK_IMPORTED_MODULE_0__.burger)();
       (0,_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])();
       (0,_offspring_scheme__WEBPACK_IMPORTED_MODULE_1__.hoveringOffspringScheme)();
+      (0,_map_init__WEBPACK_IMPORTED_MODULE_7__.mapBuilder)();
+      _this.blockquoteInit();
+      _this.scrollUpButton();
+      var y = new _YoutubePlayer__WEBPACK_IMPORTED_MODULE_5__["default"]();
     }
   }, {
     key: "initPlugins",
     value: function initPlugins() {
+      var _this = this;
       var sliders = new _Slick__WEBPACK_IMPORTED_MODULE_4__["default"]();
       (0,_selectric_init__WEBPACK_IMPORTED_MODULE_3__["default"])();
-      (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_5__.fancyboxInit)();
+      (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_6__.fancyboxInit)();
+      _this.initAccordion();
       console.log(3);
+    }
+  }, {
+    key: "scrollUpButton",
+    value: function scrollUpButton() {
+      $(document).on('click', '.scroll-up', function (e) {
+        e.preventDefault();
+        $('html, body').animate({
+          scrollTop: 0
+        }, 500);
+      });
+    }
+  }, {
+    key: "initAccordion",
+    value: function initAccordion() {
+      $(document).find('.accordion').accordion({
+        closeShowed: true
+      });
+    }
+  }, {
+    key: "blockquoteInit",
+    value: function blockquoteInit() {
+      $(document).find('.text blockquote').contents().each(function () {
+        if (this.nodeType === 3) {
+          // Node.TEXT_NODE
+          var text = $(this).text().trim();
+          if (text.length > 0) {
+            $(this).replaceWith('<p>' + text + '</p>');
+          }
+        }
+      });
     }
   }]);
 }();
@@ -110,8 +154,8 @@ var Slick = /*#__PURE__*/function () {
     this.init();
   }
   return _createClass(Slick, [{
-    key: "init",
-    value: function init() {
+    key: "aboutGalleryInit",
+    value: function aboutGalleryInit() {
       $(document).find('.single-about-gallery').each(function () {
         var $slider = $(this);
         $slider.slick({
@@ -141,9 +185,146 @@ var Slick = /*#__PURE__*/function () {
         });
       });
     }
+  }, {
+    key: "productGalleryInit",
+    value: function productGalleryInit() {
+      var args = {
+        slidesToShow: 1,
+        dots: true,
+        arrows: true
+      };
+      var argsNav = {
+        slidesToShow: 4,
+        arrows: false,
+        focusOnSelect: true
+        // centerMode: true,
+      };
+      $(document).find('.product-gallery').each(function () {
+        var $slider = $(this);
+        var $wrapper = $slider.closest('.product-gallery-wrapper');
+        var $nav = $wrapper.find('.product-gallery-preview');
+        if ($nav.length > 0) {
+          args.asNavFor = $nav;
+          argsNav.asNavFor = $slider;
+          $nav.slick(argsNav);
+        }
+        $slider.slick(args);
+      });
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      this.aboutGalleryInit();
+      this.productGalleryInit();
+    }
   }]);
 }();
 
+
+/***/ }),
+
+/***/ "./resources/js/components/YoutubePlayer.js":
+/*!**************************************************!*\
+  !*** ./resources/js/components/YoutubePlayer.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ YoutubePlayer),
+/* harmony export */   isValidHttpUrl: () => (/* binding */ isValidHttpUrl)
+/* harmony export */ });
+/* harmony import */ var _fancybox_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_fancybox-init */ "./resources/js/components/_fancybox-init.js");
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+var YoutubePlayer = /*#__PURE__*/function () {
+  function YoutubePlayer() {
+    _classCallCheck(this, YoutubePlayer);
+    this.listen();
+  }
+  return _createClass(YoutubePlayer, [{
+    key: "listen",
+    value: function listen() {
+      $(document).on('click', '.video-element', function (e) {
+        e.preventDefault();
+        console.log(2);
+        var $t = $(this);
+        var href = $t.attr('href');
+        var $el = $(document).find('#player #videoContainer');
+        if ($el.length === 0) $('#main').append('<div id="player" class="modal-window player-window"></div>');
+        $el = $(document).find('#player');
+        if (isValidHttpUrl(href)) {
+          var videoId = href.split('v=')[1];
+          var embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+          $el.html('<div id="videoContainer" class="video-container"><div class="loader"><img src="' + loader + '" alt=""></div><iframe width="1920" height="1080" src="' + embedUrl + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
+          (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_0__.openModal)($el);
+        }
+      });
+    }
+  }]);
+}();
+
+function isValidHttpUrl(string) {
+  var url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
+/***/ }),
+
+/***/ "./resources/js/components/_accordion.js":
+/*!***********************************************!*\
+  !*** ./resources/js/components/_accordion.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+$.fn.accordion = function () {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    closeShowed: false
+  };
+  var $elements = $(this);
+  var titleSelector = args.title || '.accordion-title';
+  var contentSelector = args.content || '.accordion-content';
+  var closeShowed = args.closeShowed;
+  $elements.each(function () {
+    var $element = $(this);
+    var $title = $element.find(titleSelector);
+    var $content = $element.find(contentSelector);
+    var $parent = $element.parent();
+    if ($title.length > 0 && $content.length > 0) {
+      $title.on('click', function (e) {
+        e.preventDefault();
+        var $t = $(this);
+        var isShowed = $t.hasClass('active');
+        if (isShowed) {
+          $element.removeClass('active');
+          $title.removeClass('active');
+          $content.removeClass('active').slideUp();
+        } else {
+          if (closeShowed) {
+            $parent.find(titleSelector + '.active').removeClass('active');
+            $parent.find(contentSelector + '.active').removeClass('active').slideUp();
+          }
+          $element.addClass('active');
+          $title.addClass('active');
+          $content.addClass('active').slideDown();
+        }
+      });
+    }
+  });
+};
 
 /***/ }),
 
@@ -193,7 +374,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 function fancyboxInit() {
-  console.log(1);
   $(document).on('click', '.close-modal', function (e) {
     closeModal();
   });
@@ -228,6 +408,118 @@ function closeModal() {
   var $el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : $(document).find('.modal-window.open');
   $el.removeClass('open');
   $('body').removeClass('open-modal');
+  if ($el.hasClass('player-window')) {
+    $el.html('');
+  }
+}
+
+/***/ }),
+
+/***/ "./resources/js/components/_map-init.js":
+/*!**********************************************!*\
+  !*** ./resources/js/components/_map-init.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   mapBuilder: () => (/* binding */ mapBuilder)
+/* harmony export */ });
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+var stylers = [{
+  "featureType": "water",
+  "elementType": "geometry",
+  "stylers": [{
+    "color": "#193341"
+  }]
+}, {
+  "featureType": "landscape",
+  "elementType": "geometry",
+  "stylers": [{
+    "color": "#2c5a71"
+  }]
+}, {
+  "featureType": "road",
+  "elementType": "geometry",
+  "stylers": [{
+    "color": "#29768a"
+  }, {
+    "lightness": -37
+  }]
+}, {
+  "featureType": "poi",
+  "elementType": "geometry",
+  "stylers": [{
+    "color": "#406d80"
+  }]
+}, {
+  "featureType": "transit",
+  "elementType": "geometry",
+  "stylers": [{
+    "color": "#406d80"
+  }]
+}, {
+  "elementType": "labels.text.stroke",
+  "stylers": [{
+    "visibility": "on"
+  }, {
+    "color": "#3e606f"
+  }, {
+    "weight": 2
+  }, {
+    "gamma": 0.84
+  }]
+}, {
+  "elementType": "labels.text.fill",
+  "stylers": [{
+    "color": "#ffffff"
+  }]
+}, {
+  "featureType": "administrative",
+  "elementType": "geometry",
+  "stylers": [{
+    "weight": 0.6
+  }, {
+    "color": "#1a3541"
+  }]
+}, {
+  "elementType": "labels.icon",
+  "stylers": [{
+    "visibility": "off"
+  }]
+}, {
+  "featureType": "poi.park",
+  "elementType": "geometry",
+  "stylers": [{
+    "color": "#2c5a71"
+  }]
+}];
+function mapBuilder() {
+  if ($("#map").length > 0) {
+    var mapElement = document.getElementById('map'),
+      map1Latitude = mapElement.getAttribute('data-latitude'),
+      map1Longtitude = mapElement.getAttribute('data-longitude');
+    var mapOptions = {
+      center: new google.maps.LatLng(map1Latitude, map1Longtitude),
+      zoom: 11,
+      disableDefaultUI: true,
+      zoomControl: true,
+      styles: stylers
+    };
+    var sb_map = new google.maps.Map(mapElement, mapOptions);
+    var locations = [['', map1Latitude, map1Longtitude, mapPin]];
+    var marker, link;
+    for (var i = 0; i < locations.length; i++) {
+      marker = new google.maps.Marker({
+        icon: locations[i][3],
+        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+        map: sb_map,
+        title: locations[i][0]
+      });
+      link = '';
+    }
+  }
 }
 
 /***/ }),

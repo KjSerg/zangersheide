@@ -25,7 +25,9 @@
       width: 100%;
     }
     &-list {
-      margin-bottom: 1.5rem;
+      &:not(:last-child){
+        margin-bottom: 1.5rem;
+      }
       color: #61667C;
       font-size: 1.6rem;
       font-style: italic;
