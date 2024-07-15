@@ -36,6 +36,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _map_init__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./_map-init */ "./resources/js/components/_map-init.js");
 /* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./_accordion */ "./resources/js/components/_accordion.js");
 /* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_accordion__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _favorites__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./_favorites */ "./resources/js/components/_favorites.js");
+/* harmony import */ var photoswipe_lightbox__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! photoswipe/lightbox */ "./node_modules/photoswipe/dist/photoswipe-lightbox.esm.js");
+/* harmony import */ var photoswipe_style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! photoswipe/style.css */ "./node_modules/photoswipe/dist/photoswipe.css");
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./_helpers */ "./resources/js/components/_helpers.js");
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
@@ -43,6 +47,10 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+
+
 
 
 
@@ -64,27 +72,34 @@ var Application = /*#__PURE__*/function () {
       $(document).ready(function () {
         _this.initPlugins();
         _this.initComponents();
+        _this.cf7();
       });
       $(window).on('load resize', function () {
         (0,_offspring_scheme__WEBPACK_IMPORTED_MODULE_1__.offspringScheme)();
       });
+      _this.cf7Listener();
     }
   }, {
     key: "initComponents",
     value: function initComponents() {
       var _this = this;
+      $(document).on('click', 'a[href^="http"]:not(.scroll-up, .product-gallery__item)', _helpers__WEBPACK_IMPORTED_MODULE_12__.showPreloader);
       (0,_burger__WEBPACK_IMPORTED_MODULE_0__.burger)();
       (0,_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])();
       (0,_offspring_scheme__WEBPACK_IMPORTED_MODULE_1__.hoveringOffspringScheme)();
       (0,_map_init__WEBPACK_IMPORTED_MODULE_7__.mapBuilder)();
+      (0,_favorites__WEBPACK_IMPORTED_MODULE_9__["default"])();
       _this.blockquoteInit();
       _this.scrollUpButton();
+      _this.loadMore();
+      _this.formsInit();
       var y = new _YoutubePlayer__WEBPACK_IMPORTED_MODULE_5__["default"]();
     }
   }, {
     key: "initPlugins",
     value: function initPlugins() {
       var _this = this;
+      _this.lightboxInit();
       var sliders = new _Slick__WEBPACK_IMPORTED_MODULE_4__["default"]();
       (0,_selectric_init__WEBPACK_IMPORTED_MODULE_3__["default"])();
       (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_6__.fancyboxInit)();
@@ -119,6 +134,130 @@ var Application = /*#__PURE__*/function () {
             $(this).replaceWith('<p>' + text + '</p>');
           }
         }
+      });
+    }
+  }, {
+    key: "cf7",
+    value: function cf7() {
+      $(document).find('input[name="horse"]').val($(document).find('.product-section .single-main__title').eq(0).text().trim());
+      $(document).find('.form-checkbox-container input[type="checkbox"]').each(function (index) {
+        var $i = $(this);
+        var id = $i.attr('id');
+        var $icon = $i.next('.icon');
+        if (id === undefined) {
+          id = "checkbox-".concat(index);
+          $i.attr('id', id);
+        }
+        if ($icon.length === 0) {
+          $i.after("<label for=\"".concat(id, "\" class=\"icon\"></label>"));
+        }
+      });
+    }
+  }, {
+    key: "cf7Listener",
+    value: function cf7Listener() {
+      document.addEventListener('wpcf7mailsent', function (event) {
+        $('#thanks .modal-window__title').text(event.detail.apiResponse.message);
+        (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_6__.closeModal)();
+        (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_6__.openModal)($('#thanks'));
+        setTimeout(function () {
+          (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_6__.closeModal)($('#thanks'));
+        }, 3000);
+      }, false);
+      document.addEventListener('wpcf7invalid', function (event) {
+        var invalid_fields = event.detail.apiResponse.invalid_fields;
+        for (var a = 0; a < invalid_fields.length; a++) {
+          var id = invalid_fields[a].error_id;
+          $(document).find('input[aria-describedby="' + id + '"]').addClass('error');
+        }
+      }, false);
+    }
+  }, {
+    key: "loadMore",
+    value: function loadMore() {
+      var load = false;
+      var parser = new DOMParser();
+      $(document).on('click', '.button-load-more', function (e) {
+        e.preventDefault();
+        var $t = $(this);
+        var href = $t.attr('href');
+        if (load) return;
+        var $pagination = $(document).find('.pagination-container');
+        (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.showPreloader)();
+        $pagination.addClass('not-active');
+        $.ajax({
+          type: 'GET',
+          url: href
+        }).done(function (r) {
+          (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.hidePreloader)();
+          var $requestBody = $(parser.parseFromString(r, "text/html"));
+          $(document).find('.container-js').append($requestBody.find('.container-js').html());
+          $pagination.html($requestBody.find('.pagination-container').html());
+          load = false;
+          $pagination.removeClass('not-active');
+        });
+      });
+    }
+  }, {
+    key: "lightboxInit",
+    value: function lightboxInit() {
+      var lightbox = new photoswipe_lightbox__WEBPACK_IMPORTED_MODULE_10__["default"]({
+        gallery: '#my-gallery',
+        children: 'a:not(.video-element)',
+        pswpModule: function pswpModule() {
+          return __webpack_require__.e(/*! import() */ "node_modules_photoswipe_dist_photoswipe_esm_js").then(__webpack_require__.bind(__webpack_require__, /*! photoswipe */ "./node_modules/photoswipe/dist/photoswipe.esm.js"));
+        }
+      });
+      lightbox.init();
+    }
+  }, {
+    key: "formsInit",
+    value: function formsInit() {
+      var $doc = $(document);
+      $doc.ready(function () {
+        $doc.on('submit', '.form-js', function (e) {
+          e.preventDefault();
+          var $form = $(this);
+          var this_form = $form.attr('id');
+          var test = (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.isValidForm)($form);
+          if (test) {
+            var thisForm = document.getElementById(this_form);
+            var formData = new FormData(thisForm);
+            (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.showPreloader)();
+            $.ajax({
+              type: $form.attr('method') || 'POST',
+              url: adminAjax,
+              processData: false,
+              contentType: false,
+              data: formData
+            }).done(function (r) {
+              $form.trigger('reset');
+              (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_6__.closeModal)();
+              if (r) {
+                if ((0,_helpers__WEBPACK_IMPORTED_MODULE_12__.isJsonString)(r)) {
+                  var res = JSON.parse(r);
+                  if (res.msg !== '' && res.msg !== undefined) {
+                    (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.showMassage)(res.msg);
+                  }
+                  if (res.is_reload === 'true') {
+                    window.location.reload();
+                    return false;
+                  }
+                  if (res.url !== undefined) {
+                    (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.showPreloader)();
+                    window.location.href = res.url;
+                  }
+                } else {
+                  (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.showMassage)(r);
+                }
+              }
+              (0,_helpers__WEBPACK_IMPORTED_MODULE_12__.hidePreloader)();
+            });
+          }
+        });
+      });
+      $doc.on('input', 'input[type="tel"]', function () {
+        $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁёІі]/, ''));
       });
     }
   }]);
@@ -191,22 +330,38 @@ var Slick = /*#__PURE__*/function () {
       var args = {
         slidesToShow: 1,
         dots: true,
+        infinite: false,
         arrows: true
       };
       var argsNav = {
         slidesToShow: 4,
         arrows: false,
-        focusOnSelect: true
-        // centerMode: true,
+        focusOnSelect: true,
+        infinite: false,
+        responsive: [{
+          breakpoint: 1371,
+          settings: {
+            slidesToShow: 3
+          }
+        }]
       };
       $(document).find('.product-gallery').each(function () {
         var $slider = $(this);
         var $wrapper = $slider.closest('.product-gallery-wrapper');
         var $nav = $wrapper.find('.product-gallery-preview');
         if ($nav.length > 0) {
-          args.asNavFor = $nav;
-          argsNav.asNavFor = $slider;
-          $nav.slick(argsNav);
+          var $slides = $wrapper.find('.product-gallery-preview > *');
+          if ($slides.length < 4) {
+            $nav.addClass('center-mode');
+            argsNav.slidesToShow = 2;
+          }
+          if ($slides.length > 1) {
+            args.asNavFor = $nav;
+            argsNav.asNavFor = $slider;
+            $nav.slick(argsNav);
+          } else {
+            $nav.remove();
+          }
         }
         $slider.slick(args);
       });
@@ -359,6 +514,34 @@ var burger = function burger() {
 
 /***/ }),
 
+/***/ "./resources/js/components/_cockie.js":
+/*!********************************************!*\
+  !*** ./resources/js/components/_cockie.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getCookie: () => (/* binding */ getCookie),
+/* harmony export */   setCookie: () => (/* binding */ setCookie)
+/* harmony export */ });
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/; Secure; SameSite=None";
+}
+function getCookie(name) {
+  var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+/***/ }),
+
 /***/ "./resources/js/components/_fancybox-init.js":
 /*!***************************************************!*\
   !*** ./resources/js/components/_fancybox-init.js ***!
@@ -411,6 +594,254 @@ function closeModal() {
   if ($el.hasClass('player-window')) {
     $el.html('');
   }
+}
+
+/***/ }),
+
+/***/ "./resources/js/components/_favorites.js":
+/*!***********************************************!*\
+  !*** ./resources/js/components/_favorites.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ favorites)
+/* harmony export */ });
+/* harmony import */ var _cockie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cockie */ "./resources/js/components/_cockie.js");
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_helpers */ "./resources/js/components/_helpers.js");
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+
+function favorites() {
+  $(document).on('click', '.button-favorites, .like', function (e) {
+    e.preventDefault();
+    var $t = $(this);
+    var id = $t.attr('data-id');
+    var separator = ',';
+    if (id === undefined) return;
+    var favorites = (0,_cockie__WEBPACK_IMPORTED_MODULE_0__.getCookie)('favorites');
+    if (!favorites) favorites = '';
+    favorites = favorites.split(separator);
+    if (favorites.includes(id)) {
+      $t.removeClass('active');
+      favorites = (0,_helpers__WEBPACK_IMPORTED_MODULE_1__.removeArrayElement)(id, favorites);
+    } else {
+      $t.addClass('active');
+      favorites.push(id);
+    }
+    favorites.join(separator);
+    (0,_cockie__WEBPACK_IMPORTED_MODULE_0__.setCookie)('favorites', favorites, 365);
+    (0,_helpers__WEBPACK_IMPORTED_MODULE_1__.hidePreloader)();
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/js/components/_helpers.js":
+/*!*********************************************!*\
+  !*** ./resources/js/components/_helpers.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   hidePreloader: () => (/* binding */ hidePreloader),
+/* harmony export */   isElementInViewport: () => (/* binding */ isElementInViewport),
+/* harmony export */   isJsonString: () => (/* binding */ isJsonString),
+/* harmony export */   isObjectEmpty: () => (/* binding */ isObjectEmpty),
+/* harmony export */   isValidForm: () => (/* binding */ isValidForm),
+/* harmony export */   removeArrayElement: () => (/* binding */ removeArrayElement),
+/* harmony export */   showMassage: () => (/* binding */ showMassage),
+/* harmony export */   showPreloader: () => (/* binding */ showPreloader)
+/* harmony export */ });
+/* harmony import */ var _fancybox_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_fancybox-init */ "./resources/js/components/_fancybox-init.js");
+/* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
+function removeArrayElement(element, array) {
+  var index = array.indexOf(element);
+  if (index !== -1) {
+    array.splice(index, 1);
+  }
+  return array;
+}
+function showPreloader() {
+  $('.preloader').addClass('active');
+}
+function hidePreloader() {
+  $('.preloader').removeClass('active');
+}
+function isValidForm($form) {
+  var test = true,
+    thsInputs = $form.find('input, textarea'),
+    $select = $form.find('select[required]');
+  var $address = $form.find('input.address-js[required]');
+  $select.each(function () {
+    var $ths = $(this);
+    var $label = $ths.closest('.form-group');
+    var val = $ths.val();
+    console.log(val);
+    if (Array.isArray(val) && val.length === 0) {
+      console.log(1);
+      test = false;
+      $label.addClass('error');
+    } else {
+      console.log(2);
+      $label.removeClass('error');
+      if (val === null || val === undefined) {
+        console.log(3);
+        test = false;
+        $label.addClass('error');
+      }
+    }
+  });
+  thsInputs.each(function () {
+    var thsInput = $(this),
+      $label = thsInput.closest('.form_element'),
+      thsInputType = thsInput.attr('type'),
+      thsInputVal = thsInput.val().trim(),
+      inputReg = new RegExp(thsInput.data('reg')),
+      inputTest = inputReg.test(thsInputVal);
+    if (thsInput.attr('required')) {
+      if (thsInputVal.length <= 0) {
+        test = false;
+        thsInput.addClass('error');
+        $label.addClass('error');
+        thsInput.focus();
+        if (thsInputType === 'file') {
+          $form.find('.cabinet-item__photo-item').eq(0).addClass('error');
+          $('html, body').animate({
+            scrollTop: $form.find('.cabinet-item__photo-item').eq(0).offset().top
+          });
+        }
+      } else {
+        thsInput.removeClass('error');
+        $label.removeClass('error');
+        if (thsInput.data('reg')) {
+          if (inputTest === false) {
+            test = false;
+            thsInput.addClass('error');
+            $label.addClass('error');
+            thsInput.focus();
+          } else {
+            thsInput.removeClass('error');
+            $label.removeClass('error');
+          }
+        }
+        if (thsInputType === 'file') {
+          $form.find('.cabinet-item__photo-item').eq(0).removeClass('error');
+        }
+      }
+    }
+    if (thsInput.hasClass('time-input')) {
+      if (validateTime(thsInputVal)) {
+        thsInput.removeClass('error');
+        $label.removeClass('error');
+      } else {
+        test = false;
+        thsInput.addClass('error');
+        $label.addClass('error');
+        thsInput.focus();
+      }
+    }
+  });
+  var $password = $form.find('input[name="password"]');
+  var $passwordRepeat = $form.find('input[name="repeat_password"]');
+  var $passwordOld = $form.find('input[name="old_password"]');
+  var $passwordNew = $form.find('input[name="new_password"]');
+  if (!$form.hasClass('login-form')) {
+    if ($password.length > 0 && $passwordRepeat.length > 0) {
+      if ($password.val() !== $passwordRepeat.val()) {
+        $password.addClass('error');
+        $passwordRepeat.addClass('error');
+        return false;
+      }
+      if (!isValidPassword($password.val())) {
+        showMassage(errorPswMsg);
+        $password.addClass('error');
+        $passwordRepeat.addClass('error');
+        return false;
+      }
+      $password.removeClass('error');
+      $passwordRepeat.removeClass('error');
+    } else if ($password.length > 0 && $password.val().length > 0) {
+      if (!isValidPassword($password.val())) {
+        showMassage(errorPswMsg);
+        $password.addClass('error');
+        $passwordRepeat.addClass('error');
+        return false;
+      }
+      $password.removeClass('error');
+      $passwordRepeat.removeClass('error');
+    }
+    if ($passwordOld.length > 0 && $passwordNew.length > 0) {
+      if (!isValidPassword($passwordNew.val())) {
+        showMassage(errorPswMsg);
+        $passwordNew.addClass('error');
+        return false;
+      }
+      $passwordNew.removeClass('error');
+    }
+  }
+  var $inp = $form.find('input[name="consent"]');
+  if ($inp.length > 0) {
+    if ($inp.prop('checked') === false) {
+      $inp.closest('.form-consent').addClass('error');
+      return false;
+    }
+    $inp.closest('.form-consent').removeClass('error');
+  }
+  if ($address.length > 0) {
+    var addressTest = true;
+    $address.each(function (index) {
+      var $el = $(this);
+      var val = $el.val() || '';
+      var selected = $el.attr('data-selected') || '';
+      if (selected.trim() !== val.trim()) {
+        test = false;
+        addressTest = false;
+        $el.addClass('error');
+      } else {
+        $el.removeClass('error');
+      }
+      if (val.length === 0) {
+        test = false;
+        $el.addClass('error');
+      }
+    });
+    if (!addressTest) showMassage(locationErrorString);
+  }
+  if ($form.hasClass('comment-form')) {
+    if ($form.find('.value-field').val().trim().length === 0) return false;
+  }
+  return test;
+}
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+var isObjectEmpty = function isObjectEmpty(objectName) {
+  return JSON.stringify(objectName) === "{}";
+};
+function isElementInViewport(el) {
+  if (typeof jQuery === "function" && el instanceof jQuery) {
+    el = el[0];
+  }
+  var rect = el.getBoundingClientRect();
+  return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+}
+function showMassage(message) {
+  $('#thanks .modal-window__title').html(message);
+  (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_0__.openModal)($('#thanks'));
+  setTimeout(function () {
+    (0,_fancybox_init__WEBPACK_IMPORTED_MODULE_0__.closeModal)($('#thanks'));
+  }, 3000);
 }
 
 /***/ }),
@@ -601,10 +1032,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var selectric__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! selectric */ "./node_modules/selectric/public/jquery.selectric.js");
 /* harmony import */ var selectric__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(selectric__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_helpers */ "./resources/js/components/_helpers.js");
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
 
 function initSelectric() {
   $(document).find('.selectric').selectric();
+  $(document).on('change', '.trigger-on-select', function () {
+    (0,_helpers__WEBPACK_IMPORTED_MODULE_1__.showPreloader)();
+    $(this).closest('form').trigger('submit');
+  });
+  $(document).on('change', '.sort-form', function () {
+    (0,_helpers__WEBPACK_IMPORTED_MODULE_1__.showPreloader)();
+    var $t = $(this);
+    var $form = $t.closest('form');
+    var $option = $t.find('option:selected');
+    var order = $option.attr('data-order') || 'ASC';
+    $form.find('input[name="order"]').val(order);
+    $form.trigger('submit');
+  });
 }
 
 /***/ }),
@@ -620,7 +1066,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ tabs)
 /* harmony export */ });
+/* harmony import */ var _offspring_scheme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_offspring-scheme */ "./resources/js/components/_offspring-scheme.js");
 /* provided dependency */ var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+
 function tabs() {
   $(document).on('click', '.tabs-head__item', function (e) {
     e.preventDefault();
@@ -633,8 +1081,109 @@ function tabs() {
     $wrapper.find('.tabs-content').removeClass('active');
     $t.addClass('active');
     $wrapper.find('.tabs-content' + href).addClass('active');
+    (0,_offspring_scheme__WEBPACK_IMPORTED_MODULE_0__.offspringScheme)();
   });
 }
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[2]!./node_modules/photoswipe/dist/photoswipe.css":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[2]!./node_modules/photoswipe/dist/photoswipe.css ***!
+  \***************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "/*! PhotoSwipe main CSS by Dmytro Semenov | photoswipe.com */\r\n\r\n.pswp {\r\n  --pswp-bg: #000;\r\n  --pswp-placeholder-bg: #222;\r\n  \r\n\r\n  --pswp-root-z-index: 100000;\r\n  \r\n  --pswp-preloader-color: rgba(79, 79, 79, 0.4);\r\n  --pswp-preloader-color-secondary: rgba(255, 255, 255, 0.9);\r\n  \r\n  /* defined via js:\r\n  --pswp-transition-duration: 333ms; */\r\n  \r\n  --pswp-icon-color: #fff;\r\n  --pswp-icon-color-secondary: #4f4f4f;\r\n  --pswp-icon-stroke-color: #4f4f4f;\r\n  --pswp-icon-stroke-width: 2px;\r\n\r\n  --pswp-error-text-color: var(--pswp-icon-color);\r\n}\r\n\r\n\r\n/*\r\n\tStyles for basic PhotoSwipe (pswp) functionality (sliding area, open/close transitions)\r\n*/\r\n\r\n.pswp {\r\n\tposition: fixed;\r\n\ttop: 0;\r\n\tleft: 0;\r\n\twidth: 100%;\r\n\theight: 100%;\r\n\tz-index: var(--pswp-root-z-index);\r\n\tdisplay: none;\r\n\ttouch-action: none;\r\n\toutline: 0;\r\n\topacity: 0.003;\r\n\tcontain: layout style size;\r\n\t-webkit-tap-highlight-color: rgba(0, 0, 0, 0);\r\n}\r\n\r\n/* Prevents focus outline on the root element,\r\n  (it may be focused initially) */\r\n.pswp:focus {\r\n  outline: 0;\r\n}\r\n\r\n.pswp * {\r\n  box-sizing: border-box;\r\n}\r\n\r\n.pswp img {\r\n  max-width: none;\r\n}\r\n\r\n.pswp--open {\r\n\tdisplay: block;\r\n}\r\n\r\n.pswp,\r\n.pswp__bg {\r\n\ttransform: translateZ(0);\r\n\twill-change: opacity;\r\n}\r\n\r\n.pswp__bg {\r\n  opacity: 0.005;\r\n\tbackground: var(--pswp-bg);\r\n}\r\n\r\n.pswp,\r\n.pswp__scroll-wrap {\r\n\toverflow: hidden;\r\n}\r\n\r\n.pswp__scroll-wrap,\r\n.pswp__bg,\r\n.pswp__container,\r\n.pswp__item,\r\n.pswp__content,\r\n.pswp__img,\r\n.pswp__zoom-wrap {\r\n\tposition: absolute;\r\n\ttop: 0;\r\n\tleft: 0;\r\n\twidth: 100%;\r\n\theight: 100%;\r\n}\r\n\r\n.pswp__img,\r\n.pswp__zoom-wrap {\r\n\twidth: auto;\r\n\theight: auto;\r\n}\r\n\r\n.pswp--click-to-zoom.pswp--zoom-allowed .pswp__img {\r\n\tcursor: zoom-in;\r\n}\r\n\r\n.pswp--click-to-zoom.pswp--zoomed-in .pswp__img {\r\n\tcursor: move;\r\n\tcursor: grab;\r\n}\r\n\r\n.pswp--click-to-zoom.pswp--zoomed-in .pswp__img:active {\r\n  cursor: grabbing;\r\n}\r\n\r\n/* :active to override grabbing cursor */\r\n.pswp--no-mouse-drag.pswp--zoomed-in .pswp__img,\r\n.pswp--no-mouse-drag.pswp--zoomed-in .pswp__img:active,\r\n.pswp__img {\r\n\tcursor: zoom-out;\r\n}\r\n\r\n\r\n/* Prevent selection and tap highlights */\r\n.pswp__container,\r\n.pswp__img,\r\n.pswp__button,\r\n.pswp__counter {\r\n\t-webkit-user-select: none;\r\n\t-moz-user-select: none;\r\n\tuser-select: none;\r\n}\r\n\r\n.pswp__item {\r\n\t/* z-index for fade transition */\r\n\tz-index: 1;\r\n\toverflow: hidden;\r\n}\r\n\r\n.pswp__hidden {\r\n\tdisplay: none !important;\r\n}\r\n\r\n/* Allow to click through pswp__content element, but not its children */\r\n.pswp__content {\r\n  pointer-events: none;\r\n}\r\n.pswp__content > * {\r\n  pointer-events: auto;\r\n}\r\n\r\n\r\n/*\r\n\r\n  PhotoSwipe UI\r\n\r\n*/\r\n\r\n/*\r\n\tError message appears when image is not loaded\r\n\t(JS option errorMsg controls markup)\r\n*/\r\n.pswp__error-msg-container {\r\n  display: grid;\r\n}\r\n.pswp__error-msg {\r\n\tmargin: auto;\r\n\tfont-size: 1em;\r\n\tline-height: 1;\r\n\tcolor: var(--pswp-error-text-color);\r\n}\r\n\r\n/*\r\nclass pswp__hide-on-close is applied to elements that\r\nshould hide (for example fade out) when PhotoSwipe is closed\r\nand show (for example fade in) when PhotoSwipe is opened\r\n */\r\n.pswp .pswp__hide-on-close {\r\n\topacity: 0.005;\r\n\twill-change: opacity;\r\n\ttransition: opacity var(--pswp-transition-duration) cubic-bezier(0.4, 0, 0.22, 1);\r\n\tz-index: 10; /* always overlap slide content */\r\n\tpointer-events: none; /* hidden elements should not be clickable */\r\n}\r\n\r\n/* class pswp--ui-visible is added when opening or closing transition starts */\r\n.pswp--ui-visible .pswp__hide-on-close {\r\n\topacity: 1;\r\n\tpointer-events: auto;\r\n}\r\n\r\n/* <button> styles, including css reset */\r\n.pswp__button {\r\n\tposition: relative;\r\n\tdisplay: block;\r\n\twidth: 50px;\r\n\theight: 60px;\r\n\tpadding: 0;\r\n\tmargin: 0;\r\n\toverflow: hidden;\r\n\tcursor: pointer;\r\n\tbackground: none;\r\n\tborder: 0;\r\n\tbox-shadow: none;\r\n\topacity: 0.85;\r\n\t-webkit-appearance: none;\r\n\t-webkit-touch-callout: none;\r\n}\r\n\r\n.pswp__button:hover,\r\n.pswp__button:active,\r\n.pswp__button:focus {\r\n  transition: none;\r\n  padding: 0;\r\n  background: none;\r\n  border: 0;\r\n  box-shadow: none;\r\n  opacity: 1;\r\n}\r\n\r\n.pswp__button:disabled {\r\n  opacity: 0.3;\r\n  cursor: auto;\r\n}\r\n\r\n.pswp__icn {\r\n  fill: var(--pswp-icon-color);\r\n  color: var(--pswp-icon-color-secondary);\r\n}\r\n\r\n.pswp__icn {\r\n  position: absolute;\r\n  top: 14px;\r\n  left: 9px;\r\n  width: 32px;\r\n  height: 32px;\r\n  overflow: hidden;\r\n  pointer-events: none;\r\n}\r\n\r\n.pswp__icn-shadow {\r\n  stroke: var(--pswp-icon-stroke-color);\r\n  stroke-width: var(--pswp-icon-stroke-width);\r\n  fill: none;\r\n}\r\n\r\n.pswp__icn:focus {\r\n\toutline: 0;\r\n}\r\n\r\n/*\r\n\tdiv element that matches size of large image,\r\n\tlarge image loads on top of it,\r\n\tused when msrc is not provided\r\n*/\r\ndiv.pswp__img--placeholder,\r\n.pswp__img--with-bg {\r\n\tbackground: var(--pswp-placeholder-bg);\r\n}\r\n\r\n.pswp__top-bar {\r\n\tposition: absolute;\r\n\tleft: 0;\r\n\ttop: 0;\r\n\twidth: 100%;\r\n\theight: 60px;\r\n\tdisplay: flex;\r\n  flex-direction: row;\r\n  justify-content: flex-end;\r\n\tz-index: 10;\r\n\r\n\t/* allow events to pass through top bar itself */\r\n\tpointer-events: none !important;\r\n}\r\n.pswp__top-bar > * {\r\n  pointer-events: auto;\r\n  /* this makes transition significantly more smooth,\r\n     even though inner elements are not animated */\r\n  will-change: opacity;\r\n}\r\n\r\n\r\n/*\r\n\r\n  Close button\r\n\r\n*/\r\n.pswp__button--close {\r\n  margin-right: 6px;\r\n}\r\n\r\n\r\n/*\r\n\r\n  Arrow buttons\r\n\r\n*/\r\n.pswp__button--arrow {\r\n  position: absolute;\r\n  top: 0;\r\n  width: 75px;\r\n  height: 100px;\r\n  top: 50%;\r\n  margin-top: -50px;\r\n}\r\n\r\n.pswp__button--arrow:disabled {\r\n  display: none;\r\n  cursor: default;\r\n}\r\n\r\n.pswp__button--arrow .pswp__icn {\r\n  top: 50%;\r\n  margin-top: -30px;\r\n  width: 60px;\r\n  height: 60px;\r\n  background: none;\r\n  border-radius: 0;\r\n}\r\n\r\n.pswp--one-slide .pswp__button--arrow {\r\n  display: none;\r\n}\r\n\r\n/* hide arrows on touch screens */\r\n.pswp--touch .pswp__button--arrow {\r\n  visibility: hidden;\r\n}\r\n\r\n/* show arrows only after mouse was used */\r\n.pswp--has_mouse .pswp__button--arrow {\r\n  visibility: visible;\r\n}\r\n\r\n.pswp__button--arrow--prev {\r\n  right: auto;\r\n  left: 0px;\r\n}\r\n\r\n.pswp__button--arrow--next {\r\n  right: 0px;\r\n}\r\n.pswp__button--arrow--next .pswp__icn {\r\n  left: auto;\r\n  right: 14px;\r\n  /* flip horizontally */\r\n  transform: scale(-1, 1);\r\n}\r\n\r\n/*\r\n\r\n  Zoom button\r\n\r\n*/\r\n.pswp__button--zoom {\r\n  display: none;\r\n}\r\n\r\n.pswp--zoom-allowed .pswp__button--zoom {\r\n  display: block;\r\n}\r\n\r\n/* \"+\" => \"-\" */\r\n.pswp--zoomed-in .pswp__zoom-icn-bar-v {\r\n  display: none;\r\n}\r\n\r\n\r\n/*\r\n\r\n  Loading indicator\r\n\r\n*/\r\n.pswp__preloader {\r\n  position: relative;\r\n  overflow: hidden;\r\n  width: 50px;\r\n  height: 60px;\r\n  margin-right: auto;\r\n}\r\n\r\n.pswp__preloader .pswp__icn {\r\n  opacity: 0;\r\n  transition: opacity 0.2s linear;\r\n  animation: pswp-clockwise 600ms linear infinite;\r\n}\r\n\r\n.pswp__preloader--active .pswp__icn {\r\n  opacity: 0.85;\r\n}\r\n\r\n@keyframes pswp-clockwise {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n\r\n/*\r\n\r\n  \"1 of 10\" counter\r\n\r\n*/\r\n.pswp__counter {\r\n  height: 30px;\r\n  margin-top: 15px;\r\n  margin-inline-start: 20px;\r\n  font-size: 14px;\r\n  line-height: 30px;\r\n  color: var(--pswp-icon-color);\r\n  text-shadow: 1px 1px 3px var(--pswp-icon-color-secondary);\r\n  opacity: 0.85;\r\n}\r\n\r\n.pswp--one-slide .pswp__counter {\r\n  display: none;\r\n}\r\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/runtime/api.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+// eslint-disable-next-line func-names
+module.exports = function (cssWithMappingToString) {
+  var list = []; // return the list of modules as css string
+
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = cssWithMappingToString(item);
+
+      if (item[2]) {
+        return "@media ".concat(item[2], " {").concat(content, "}");
+      }
+
+      return content;
+    }).join("");
+  }; // import a list of modules into the list
+  // eslint-disable-next-line func-names
+
+
+  list.i = function (modules, mediaQuery, dedupe) {
+    if (typeof modules === "string") {
+      // eslint-disable-next-line no-param-reassign
+      modules = [[null, modules, ""]];
+    }
+
+    var alreadyImportedModules = {};
+
+    if (dedupe) {
+      for (var i = 0; i < this.length; i++) {
+        // eslint-disable-next-line prefer-destructuring
+        var id = this[i][0];
+
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = [].concat(modules[_i]);
+
+      if (dedupe && alreadyImportedModules[item[0]]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      if (mediaQuery) {
+        if (!item[2]) {
+          item[2] = mediaQuery;
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
+        }
+      }
+
+      list.push(item);
+    }
+  };
+
+  return list;
+};
 
 /***/ }),
 
@@ -15546,6 +16095,2290 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }));
 
 
+/***/ }),
+
+/***/ "./node_modules/photoswipe/dist/photoswipe.css":
+/*!*****************************************************!*\
+  !*** ./node_modules/photoswipe/dist/photoswipe.css ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_ruleSet_1_rules_6_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_6_oneOf_1_use_2_photoswipe_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../css-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[1]!../../postcss-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[2]!./photoswipe.css */ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[6].oneOf[1].use[2]!./node_modules/photoswipe/dist/photoswipe.css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_ruleSet_1_rules_6_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_6_oneOf_1_use_2_photoswipe_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_ruleSet_1_rules_6_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_6_oneOf_1_use_2_photoswipe_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
+  \****************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var isOldIE = function isOldIE() {
+  var memo;
+  return function memorize() {
+    if (typeof memo === 'undefined') {
+      // Test for IE <= 9 as proposed by Browserhacks
+      // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+      // Tests for existence of standard globals is to allow style-loader
+      // to operate correctly into non-standard environments
+      // @see https://github.com/webpack-contrib/style-loader/issues/177
+      memo = Boolean(window && document && document.all && !window.atob);
+    }
+
+    return memo;
+  };
+}();
+
+var getTarget = function getTarget() {
+  var memo = {};
+  return function memorize(target) {
+    if (typeof memo[target] === 'undefined') {
+      var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself
+
+      if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+        try {
+          // This will throw an exception if access to iframe is blocked
+          // due to cross-origin restrictions
+          styleTarget = styleTarget.contentDocument.head;
+        } catch (e) {
+          // istanbul ignore next
+          styleTarget = null;
+        }
+      }
+
+      memo[target] = styleTarget;
+    }
+
+    return memo[target];
+  };
+}();
+
+var stylesInDom = [];
+
+function getIndexByIdentifier(identifier) {
+  var result = -1;
+
+  for (var i = 0; i < stylesInDom.length; i++) {
+    if (stylesInDom[i].identifier === identifier) {
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+function modulesToDom(list, options) {
+  var idCountMap = {};
+  var identifiers = [];
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var id = options.base ? item[0] + options.base : item[0];
+    var count = idCountMap[id] || 0;
+    var identifier = "".concat(id, " ").concat(count);
+    idCountMap[id] = count + 1;
+    var index = getIndexByIdentifier(identifier);
+    var obj = {
+      css: item[1],
+      media: item[2],
+      sourceMap: item[3]
+    };
+
+    if (index !== -1) {
+      stylesInDom[index].references++;
+      stylesInDom[index].updater(obj);
+    } else {
+      stylesInDom.push({
+        identifier: identifier,
+        updater: addStyle(obj, options),
+        references: 1
+      });
+    }
+
+    identifiers.push(identifier);
+  }
+
+  return identifiers;
+}
+
+function insertStyleElement(options) {
+  var style = document.createElement('style');
+  var attributes = options.attributes || {};
+
+  if (typeof attributes.nonce === 'undefined') {
+    var nonce =  true ? __webpack_require__.nc : 0;
+
+    if (nonce) {
+      attributes.nonce = nonce;
+    }
+  }
+
+  Object.keys(attributes).forEach(function (key) {
+    style.setAttribute(key, attributes[key]);
+  });
+
+  if (typeof options.insert === 'function') {
+    options.insert(style);
+  } else {
+    var target = getTarget(options.insert || 'head');
+
+    if (!target) {
+      throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+    }
+
+    target.appendChild(style);
+  }
+
+  return style;
+}
+
+function removeStyleElement(style) {
+  // istanbul ignore if
+  if (style.parentNode === null) {
+    return false;
+  }
+
+  style.parentNode.removeChild(style);
+}
+/* istanbul ignore next  */
+
+
+var replaceText = function replaceText() {
+  var textStore = [];
+  return function replace(index, replacement) {
+    textStore[index] = replacement;
+    return textStore.filter(Boolean).join('\n');
+  };
+}();
+
+function applyToSingletonTag(style, index, remove, obj) {
+  var css = remove ? '' : obj.media ? "@media ".concat(obj.media, " {").concat(obj.css, "}") : obj.css; // For old IE
+
+  /* istanbul ignore if  */
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = replaceText(index, css);
+  } else {
+    var cssNode = document.createTextNode(css);
+    var childNodes = style.childNodes;
+
+    if (childNodes[index]) {
+      style.removeChild(childNodes[index]);
+    }
+
+    if (childNodes.length) {
+      style.insertBefore(cssNode, childNodes[index]);
+    } else {
+      style.appendChild(cssNode);
+    }
+  }
+}
+
+function applyToTag(style, options, obj) {
+  var css = obj.css;
+  var media = obj.media;
+  var sourceMap = obj.sourceMap;
+
+  if (media) {
+    style.setAttribute('media', media);
+  } else {
+    style.removeAttribute('media');
+  }
+
+  if (sourceMap && typeof btoa !== 'undefined') {
+    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
+  } // For old IE
+
+  /* istanbul ignore if  */
+
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    while (style.firstChild) {
+      style.removeChild(style.firstChild);
+    }
+
+    style.appendChild(document.createTextNode(css));
+  }
+}
+
+var singleton = null;
+var singletonCounter = 0;
+
+function addStyle(obj, options) {
+  var style;
+  var update;
+  var remove;
+
+  if (options.singleton) {
+    var styleIndex = singletonCounter++;
+    style = singleton || (singleton = insertStyleElement(options));
+    update = applyToSingletonTag.bind(null, style, styleIndex, false);
+    remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+  } else {
+    style = insertStyleElement(options);
+    update = applyToTag.bind(null, style, options);
+
+    remove = function remove() {
+      removeStyleElement(style);
+    };
+  }
+
+  update(obj);
+  return function updateStyle(newObj) {
+    if (newObj) {
+      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap) {
+        return;
+      }
+
+      update(obj = newObj);
+    } else {
+      remove();
+    }
+  };
+}
+
+module.exports = function (list, options) {
+  options = options || {}; // Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+  // tags it will allow on a page
+
+  if (!options.singleton && typeof options.singleton !== 'boolean') {
+    options.singleton = isOldIE();
+  }
+
+  list = list || [];
+  var lastIdentifiers = modulesToDom(list, options);
+  return function update(newList) {
+    newList = newList || [];
+
+    if (Object.prototype.toString.call(newList) !== '[object Array]') {
+      return;
+    }
+
+    for (var i = 0; i < lastIdentifiers.length; i++) {
+      var identifier = lastIdentifiers[i];
+      var index = getIndexByIdentifier(identifier);
+      stylesInDom[index].references--;
+    }
+
+    var newLastIdentifiers = modulesToDom(newList, options);
+
+    for (var _i = 0; _i < lastIdentifiers.length; _i++) {
+      var _identifier = lastIdentifiers[_i];
+
+      var _index = getIndexByIdentifier(_identifier);
+
+      if (stylesInDom[_index].references === 0) {
+        stylesInDom[_index].updater();
+
+        stylesInDom.splice(_index, 1);
+      }
+    }
+
+    lastIdentifiers = newLastIdentifiers;
+  };
+};
+
+/***/ }),
+
+/***/ "./node_modules/photoswipe/dist/photoswipe-lightbox.esm.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/photoswipe/dist/photoswipe-lightbox.esm.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PhotoSwipeLightbox)
+/* harmony export */ });
+/*!
+  * PhotoSwipe Lightbox 5.4.4 - https://photoswipe.com
+  * (c) 2024 Dmytro Semenov
+  */
+/** @typedef {import('../photoswipe.js').Point} Point */
+
+/**
+ * @template {keyof HTMLElementTagNameMap} T
+ * @param {string} className
+ * @param {T} tagName
+ * @param {Node} [appendToEl]
+ * @returns {HTMLElementTagNameMap[T]}
+ */
+function createElement(className, tagName, appendToEl) {
+  const el = document.createElement(tagName);
+
+  if (className) {
+    el.className = className;
+  }
+
+  if (appendToEl) {
+    appendToEl.appendChild(el);
+  }
+
+  return el;
+}
+/**
+ * Get transform string
+ *
+ * @param {number} x
+ * @param {number} [y]
+ * @param {number} [scale]
+ * @returns {string}
+ */
+
+function toTransformString(x, y, scale) {
+  let propValue = `translate3d(${x}px,${y || 0}px,0)`;
+
+  if (scale !== undefined) {
+    propValue += ` scale3d(${scale},${scale},1)`;
+  }
+
+  return propValue;
+}
+/**
+ * Apply width and height CSS properties to element
+ *
+ * @param {HTMLElement} el
+ * @param {string | number} w
+ * @param {string | number} h
+ */
+
+function setWidthHeight(el, w, h) {
+  el.style.width = typeof w === 'number' ? `${w}px` : w;
+  el.style.height = typeof h === 'number' ? `${h}px` : h;
+}
+/** @typedef {LOAD_STATE[keyof LOAD_STATE]} LoadState */
+
+/** @type {{ IDLE: 'idle'; LOADING: 'loading'; LOADED: 'loaded'; ERROR: 'error' }} */
+
+const LOAD_STATE = {
+  IDLE: 'idle',
+  LOADING: 'loading',
+  LOADED: 'loaded',
+  ERROR: 'error'
+};
+/**
+ * Check if click or keydown event was dispatched
+ * with a special key or via mouse wheel.
+ *
+ * @param {MouseEvent | KeyboardEvent} e
+ * @returns {boolean}
+ */
+
+function specialKeyUsed(e) {
+  return 'button' in e && e.button === 1 || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
+}
+/**
+ * Parse `gallery` or `children` options.
+ *
+ * @param {import('../photoswipe.js').ElementProvider} [option]
+ * @param {string} [legacySelector]
+ * @param {HTMLElement | Document} [parent]
+ * @returns HTMLElement[]
+ */
+
+function getElementsFromOption(option, legacySelector, parent = document) {
+  /** @type {HTMLElement[]} */
+  let elements = [];
+
+  if (option instanceof Element) {
+    elements = [option];
+  } else if (option instanceof NodeList || Array.isArray(option)) {
+    elements = Array.from(option);
+  } else {
+    const selector = typeof option === 'string' ? option : legacySelector;
+
+    if (selector) {
+      elements = Array.from(parent.querySelectorAll(selector));
+    }
+  }
+
+  return elements;
+}
+/**
+ * Check if variable is PhotoSwipe class
+ *
+ * @param {any} fn
+ * @returns {boolean}
+ */
+
+function isPswpClass(fn) {
+  return typeof fn === 'function' && fn.prototype && fn.prototype.goTo;
+}
+/**
+ * Check if browser is Safari
+ *
+ * @returns {boolean}
+ */
+
+function isSafari() {
+  return !!(navigator.vendor && navigator.vendor.match(/apple/i));
+}
+
+/** @typedef {import('../lightbox/lightbox.js').default} PhotoSwipeLightbox */
+
+/** @typedef {import('../photoswipe.js').default} PhotoSwipe */
+
+/** @typedef {import('../photoswipe.js').PhotoSwipeOptions} PhotoSwipeOptions */
+
+/** @typedef {import('../photoswipe.js').DataSource} DataSource */
+
+/** @typedef {import('../ui/ui-element.js').UIElementData} UIElementData */
+
+/** @typedef {import('../slide/content.js').default} ContentDefault */
+
+/** @typedef {import('../slide/slide.js').default} Slide */
+
+/** @typedef {import('../slide/slide.js').SlideData} SlideData */
+
+/** @typedef {import('../slide/zoom-level.js').default} ZoomLevel */
+
+/** @typedef {import('../slide/get-thumb-bounds.js').Bounds} Bounds */
+
+/**
+ * Allow adding an arbitrary props to the Content
+ * https://photoswipe.com/custom-content/#using-webp-image-format
+ * @typedef {ContentDefault & Record<string, any>} Content
+ */
+
+/** @typedef {{ x?: number; y?: number }} Point */
+
+/**
+ * @typedef {Object} PhotoSwipeEventsMap https://photoswipe.com/events/
+ *
+ *
+ * https://photoswipe.com/adding-ui-elements/
+ *
+ * @prop {undefined} uiRegister
+ * @prop {{ data: UIElementData }} uiElementCreate
+ *
+ *
+ * https://photoswipe.com/events/#initialization-events
+ *
+ * @prop {undefined} beforeOpen
+ * @prop {undefined} firstUpdate
+ * @prop {undefined} initialLayout
+ * @prop {undefined} change
+ * @prop {undefined} afterInit
+ * @prop {undefined} bindEvents
+ *
+ *
+ * https://photoswipe.com/events/#opening-or-closing-transition-events
+ *
+ * @prop {undefined} openingAnimationStart
+ * @prop {undefined} openingAnimationEnd
+ * @prop {undefined} closingAnimationStart
+ * @prop {undefined} closingAnimationEnd
+ *
+ *
+ * https://photoswipe.com/events/#closing-events
+ *
+ * @prop {undefined} close
+ * @prop {undefined} destroy
+ *
+ *
+ * https://photoswipe.com/events/#pointer-and-gesture-events
+ *
+ * @prop {{ originalEvent: PointerEvent }} pointerDown
+ * @prop {{ originalEvent: PointerEvent }} pointerMove
+ * @prop {{ originalEvent: PointerEvent }} pointerUp
+ * @prop {{ bgOpacity: number }} pinchClose can be default prevented
+ * @prop {{ panY: number }} verticalDrag can be default prevented
+ *
+ *
+ * https://photoswipe.com/events/#slide-content-events
+ *
+ * @prop {{ content: Content }} contentInit
+ * @prop {{ content: Content; isLazy: boolean }} contentLoad can be default prevented
+ * @prop {{ content: Content; isLazy: boolean }} contentLoadImage can be default prevented
+ * @prop {{ content: Content; slide: Slide; isError?: boolean }} loadComplete
+ * @prop {{ content: Content; slide: Slide }} loadError
+ * @prop {{ content: Content; width: number; height: number }} contentResize can be default prevented
+ * @prop {{ content: Content; width: number; height: number; slide: Slide }} imageSizeChange
+ * @prop {{ content: Content }} contentLazyLoad can be default prevented
+ * @prop {{ content: Content }} contentAppend can be default prevented
+ * @prop {{ content: Content }} contentActivate can be default prevented
+ * @prop {{ content: Content }} contentDeactivate can be default prevented
+ * @prop {{ content: Content }} contentRemove can be default prevented
+ * @prop {{ content: Content }} contentDestroy can be default prevented
+ *
+ *
+ * undocumented
+ *
+ * @prop {{ point: Point; originalEvent: PointerEvent }} imageClickAction can be default prevented
+ * @prop {{ point: Point; originalEvent: PointerEvent }} bgClickAction can be default prevented
+ * @prop {{ point: Point; originalEvent: PointerEvent }} tapAction can be default prevented
+ * @prop {{ point: Point; originalEvent: PointerEvent }} doubleTapAction can be default prevented
+ *
+ * @prop {{ originalEvent: KeyboardEvent }} keydown can be default prevented
+ * @prop {{ x: number; dragging: boolean }} moveMainScroll
+ * @prop {{ slide: Slide }} firstZoomPan
+ * @prop {{ slide: Slide | undefined, data: SlideData, index: number }} gettingData
+ * @prop {undefined} beforeResize
+ * @prop {undefined} resize
+ * @prop {undefined} viewportSize
+ * @prop {undefined} updateScrollOffset
+ * @prop {{ slide: Slide }} slideInit
+ * @prop {{ slide: Slide }} afterSetContent
+ * @prop {{ slide: Slide }} slideLoad
+ * @prop {{ slide: Slide }} appendHeavy can be default prevented
+ * @prop {{ slide: Slide }} appendHeavyContent
+ * @prop {{ slide: Slide }} slideActivate
+ * @prop {{ slide: Slide }} slideDeactivate
+ * @prop {{ slide: Slide }} slideDestroy
+ * @prop {{ destZoomLevel: number, centerPoint: Point | undefined, transitionDuration: number | false | undefined }} beforeZoomTo
+ * @prop {{ slide: Slide }} zoomPanUpdate
+ * @prop {{ slide: Slide }} initialZoomPan
+ * @prop {{ slide: Slide }} calcSlideSize
+ * @prop {undefined} resolutionChanged
+ * @prop {{ originalEvent: WheelEvent }} wheel can be default prevented
+ * @prop {{ content: Content }} contentAppendImage can be default prevented
+ * @prop {{ index: number; itemData: SlideData }} lazyLoadSlide can be default prevented
+ * @prop {undefined} lazyLoad
+ * @prop {{ slide: Slide }} calcBounds
+ * @prop {{ zoomLevels: ZoomLevel, slideData: SlideData }} zoomLevelsUpdate
+ *
+ *
+ * legacy
+ *
+ * @prop {undefined} init
+ * @prop {undefined} initialZoomIn
+ * @prop {undefined} initialZoomOut
+ * @prop {undefined} initialZoomInEnd
+ * @prop {undefined} initialZoomOutEnd
+ * @prop {{ dataSource: DataSource | undefined, numItems: number }} numItems
+ * @prop {{ itemData: SlideData; index: number }} itemData
+ * @prop {{ index: number, itemData: SlideData, instance: PhotoSwipe }} thumbBounds
+ */
+
+/**
+ * @typedef {Object} PhotoSwipeFiltersMap https://photoswipe.com/filters/
+ *
+ * @prop {(numItems: number, dataSource: DataSource | undefined) => number} numItems
+ * Modify the total amount of slides. Example on Data sources page.
+ * https://photoswipe.com/filters/#numitems
+ *
+ * @prop {(itemData: SlideData, index: number) => SlideData} itemData
+ * Modify slide item data. Example on Data sources page.
+ * https://photoswipe.com/filters/#itemdata
+ *
+ * @prop {(itemData: SlideData, element: HTMLElement, linkEl: HTMLAnchorElement) => SlideData} domItemData
+ * Modify item data when it's parsed from DOM element. Example on Data sources page.
+ * https://photoswipe.com/filters/#domitemdata
+ *
+ * @prop {(clickedIndex: number, e: MouseEvent, instance: PhotoSwipeLightbox) => number} clickedIndex
+ * Modify clicked gallery item index.
+ * https://photoswipe.com/filters/#clickedindex
+ *
+ * @prop {(placeholderSrc: string | false, content: Content) => string | false} placeholderSrc
+ * Modify placeholder image source.
+ * https://photoswipe.com/filters/#placeholdersrc
+ *
+ * @prop {(isContentLoading: boolean, content: Content) => boolean} isContentLoading
+ * Modify if the content is currently loading.
+ * https://photoswipe.com/filters/#iscontentloading
+ *
+ * @prop {(isContentZoomable: boolean, content: Content) => boolean} isContentZoomable
+ * Modify if the content can be zoomed.
+ * https://photoswipe.com/filters/#iscontentzoomable
+ *
+ * @prop {(useContentPlaceholder: boolean, content: Content) => boolean} useContentPlaceholder
+ * Modify if the placeholder should be used for the content.
+ * https://photoswipe.com/filters/#usecontentplaceholder
+ *
+ * @prop {(isKeepingPlaceholder: boolean, content: Content) => boolean} isKeepingPlaceholder
+ * Modify if the placeholder should be kept after the content is loaded.
+ * https://photoswipe.com/filters/#iskeepingplaceholder
+ *
+ *
+ * @prop {(contentErrorElement: HTMLElement, content: Content) => HTMLElement} contentErrorElement
+ * Modify an element when the content has error state (for example, if image cannot be loaded).
+ * https://photoswipe.com/filters/#contenterrorelement
+ *
+ * @prop {(element: HTMLElement, data: UIElementData) => HTMLElement} uiElement
+ * Modify a UI element that's being created.
+ * https://photoswipe.com/filters/#uielement
+ *
+ * @prop {(thumbnail: HTMLElement | null | undefined, itemData: SlideData, index: number) => HTMLElement} thumbEl
+ * Modify the thumbnail element from which opening zoom animation starts or ends.
+ * https://photoswipe.com/filters/#thumbel
+ *
+ * @prop {(thumbBounds: Bounds | undefined, itemData: SlideData, index: number) => Bounds} thumbBounds
+ * Modify the thumbnail bounds from which opening zoom animation starts or ends.
+ * https://photoswipe.com/filters/#thumbbounds
+ *
+ * @prop {(srcsetSizesWidth: number, content: Content) => number} srcsetSizesWidth
+ *
+ * @prop {(preventPointerEvent: boolean, event: PointerEvent, pointerType: string) => boolean} preventPointerEvent
+ *
+ */
+
+/**
+ * @template {keyof PhotoSwipeFiltersMap} T
+ * @typedef {{ fn: PhotoSwipeFiltersMap[T], priority: number }} Filter
+ */
+
+/**
+ * @template {keyof PhotoSwipeEventsMap} T
+ * @typedef {PhotoSwipeEventsMap[T] extends undefined ? PhotoSwipeEvent<T> : PhotoSwipeEvent<T> & PhotoSwipeEventsMap[T]} AugmentedEvent
+ */
+
+/**
+ * @template {keyof PhotoSwipeEventsMap} T
+ * @typedef {(event: AugmentedEvent<T>) => void} EventCallback
+ */
+
+/**
+ * Base PhotoSwipe event object
+ *
+ * @template {keyof PhotoSwipeEventsMap} T
+ */
+class PhotoSwipeEvent {
+  /**
+   * @param {T} type
+   * @param {PhotoSwipeEventsMap[T]} [details]
+   */
+  constructor(type, details) {
+    this.type = type;
+    this.defaultPrevented = false;
+
+    if (details) {
+      Object.assign(this, details);
+    }
+  }
+
+  preventDefault() {
+    this.defaultPrevented = true;
+  }
+
+}
+/**
+ * PhotoSwipe base class that can listen and dispatch for events.
+ * Shared by PhotoSwipe Core and PhotoSwipe Lightbox, extended by base.js
+ */
+
+
+class Eventable {
+  constructor() {
+    /**
+     * @type {{ [T in keyof PhotoSwipeEventsMap]?: ((event: AugmentedEvent<T>) => void)[] }}
+     */
+    this._listeners = {};
+    /**
+     * @type {{ [T in keyof PhotoSwipeFiltersMap]?: Filter<T>[] }}
+     */
+
+    this._filters = {};
+    /** @type {PhotoSwipe | undefined} */
+
+    this.pswp = undefined;
+    /** @type {PhotoSwipeOptions | undefined} */
+
+    this.options = undefined;
+  }
+  /**
+   * @template {keyof PhotoSwipeFiltersMap} T
+   * @param {T} name
+   * @param {PhotoSwipeFiltersMap[T]} fn
+   * @param {number} priority
+   */
+
+
+  addFilter(name, fn, priority = 100) {
+    var _this$_filters$name, _this$_filters$name2, _this$pswp;
+
+    if (!this._filters[name]) {
+      this._filters[name] = [];
+    }
+
+    (_this$_filters$name = this._filters[name]) === null || _this$_filters$name === void 0 || _this$_filters$name.push({
+      fn,
+      priority
+    });
+    (_this$_filters$name2 = this._filters[name]) === null || _this$_filters$name2 === void 0 || _this$_filters$name2.sort((f1, f2) => f1.priority - f2.priority);
+    (_this$pswp = this.pswp) === null || _this$pswp === void 0 || _this$pswp.addFilter(name, fn, priority);
+  }
+  /**
+   * @template {keyof PhotoSwipeFiltersMap} T
+   * @param {T} name
+   * @param {PhotoSwipeFiltersMap[T]} fn
+   */
+
+
+  removeFilter(name, fn) {
+    if (this._filters[name]) {
+      // @ts-expect-error
+      this._filters[name] = this._filters[name].filter(filter => filter.fn !== fn);
+    }
+
+    if (this.pswp) {
+      this.pswp.removeFilter(name, fn);
+    }
+  }
+  /**
+   * @template {keyof PhotoSwipeFiltersMap} T
+   * @param {T} name
+   * @param {Parameters<PhotoSwipeFiltersMap[T]>} args
+   * @returns {Parameters<PhotoSwipeFiltersMap[T]>[0]}
+   */
+
+
+  applyFilters(name, ...args) {
+    var _this$_filters$name3;
+
+    (_this$_filters$name3 = this._filters[name]) === null || _this$_filters$name3 === void 0 || _this$_filters$name3.forEach(filter => {
+      // @ts-expect-error
+      args[0] = filter.fn.apply(this, args);
+    });
+    return args[0];
+  }
+  /**
+   * @template {keyof PhotoSwipeEventsMap} T
+   * @param {T} name
+   * @param {EventCallback<T>} fn
+   */
+
+
+  on(name, fn) {
+    var _this$_listeners$name, _this$pswp2;
+
+    if (!this._listeners[name]) {
+      this._listeners[name] = [];
+    }
+
+    (_this$_listeners$name = this._listeners[name]) === null || _this$_listeners$name === void 0 || _this$_listeners$name.push(fn); // When binding events to lightbox,
+    // also bind events to PhotoSwipe Core,
+    // if it's open.
+
+    (_this$pswp2 = this.pswp) === null || _this$pswp2 === void 0 || _this$pswp2.on(name, fn);
+  }
+  /**
+   * @template {keyof PhotoSwipeEventsMap} T
+   * @param {T} name
+   * @param {EventCallback<T>} fn
+   */
+
+
+  off(name, fn) {
+    var _this$pswp3;
+
+    if (this._listeners[name]) {
+      // @ts-expect-error
+      this._listeners[name] = this._listeners[name].filter(listener => fn !== listener);
+    }
+
+    (_this$pswp3 = this.pswp) === null || _this$pswp3 === void 0 || _this$pswp3.off(name, fn);
+  }
+  /**
+   * @template {keyof PhotoSwipeEventsMap} T
+   * @param {T} name
+   * @param {PhotoSwipeEventsMap[T]} [details]
+   * @returns {AugmentedEvent<T>}
+   */
+
+
+  dispatch(name, details) {
+    var _this$_listeners$name2;
+
+    if (this.pswp) {
+      return this.pswp.dispatch(name, details);
+    }
+
+    const event =
+    /** @type {AugmentedEvent<T>} */
+    new PhotoSwipeEvent(name, details);
+    (_this$_listeners$name2 = this._listeners[name]) === null || _this$_listeners$name2 === void 0 || _this$_listeners$name2.forEach(listener => {
+      listener.call(this, event);
+    });
+    return event;
+  }
+
+}
+
+class Placeholder {
+  /**
+   * @param {string | false} imageSrc
+   * @param {HTMLElement} container
+   */
+  constructor(imageSrc, container) {
+    // Create placeholder
+    // (stretched thumbnail or simple div behind the main image)
+
+    /** @type {HTMLImageElement | HTMLDivElement | null} */
+    this.element = createElement('pswp__img pswp__img--placeholder', imageSrc ? 'img' : 'div', container);
+
+    if (imageSrc) {
+      const imgEl =
+      /** @type {HTMLImageElement} */
+      this.element;
+      imgEl.decoding = 'async';
+      imgEl.alt = '';
+      imgEl.src = imageSrc;
+      imgEl.setAttribute('role', 'presentation');
+    }
+
+    this.element.setAttribute('aria-hidden', 'true');
+  }
+  /**
+   * @param {number} width
+   * @param {number} height
+   */
+
+
+  setDisplayedSize(width, height) {
+    if (!this.element) {
+      return;
+    }
+
+    if (this.element.tagName === 'IMG') {
+      // Use transform scale() to modify img placeholder size
+      // (instead of changing width/height directly).
+      // This helps with performance, specifically in iOS15 Safari.
+      setWidthHeight(this.element, 250, 'auto');
+      this.element.style.transformOrigin = '0 0';
+      this.element.style.transform = toTransformString(0, 0, width / 250);
+    } else {
+      setWidthHeight(this.element, width, height);
+    }
+  }
+
+  destroy() {
+    var _this$element;
+
+    if ((_this$element = this.element) !== null && _this$element !== void 0 && _this$element.parentNode) {
+      this.element.remove();
+    }
+
+    this.element = null;
+  }
+
+}
+
+/** @typedef {import('./slide.js').default} Slide */
+
+/** @typedef {import('./slide.js').SlideData} SlideData */
+
+/** @typedef {import('../core/base.js').default} PhotoSwipeBase */
+
+/** @typedef {import('../util/util.js').LoadState} LoadState */
+
+class Content {
+  /**
+   * @param {SlideData} itemData Slide data
+   * @param {PhotoSwipeBase} instance PhotoSwipe or PhotoSwipeLightbox instance
+   * @param {number} index
+   */
+  constructor(itemData, instance, index) {
+    this.instance = instance;
+    this.data = itemData;
+    this.index = index;
+    /** @type {HTMLImageElement | HTMLDivElement | undefined} */
+
+    this.element = undefined;
+    /** @type {Placeholder | undefined} */
+
+    this.placeholder = undefined;
+    /** @type {Slide | undefined} */
+
+    this.slide = undefined;
+    this.displayedImageWidth = 0;
+    this.displayedImageHeight = 0;
+    this.width = Number(this.data.w) || Number(this.data.width) || 0;
+    this.height = Number(this.data.h) || Number(this.data.height) || 0;
+    this.isAttached = false;
+    this.hasSlide = false;
+    this.isDecoding = false;
+    /** @type {LoadState} */
+
+    this.state = LOAD_STATE.IDLE;
+
+    if (this.data.type) {
+      this.type = this.data.type;
+    } else if (this.data.src) {
+      this.type = 'image';
+    } else {
+      this.type = 'html';
+    }
+
+    this.instance.dispatch('contentInit', {
+      content: this
+    });
+  }
+
+  removePlaceholder() {
+    if (this.placeholder && !this.keepPlaceholder()) {
+      // With delay, as image might be loaded, but not rendered
+      setTimeout(() => {
+        if (this.placeholder) {
+          this.placeholder.destroy();
+          this.placeholder = undefined;
+        }
+      }, 1000);
+    }
+  }
+  /**
+   * Preload content
+   *
+   * @param {boolean} isLazy
+   * @param {boolean} [reload]
+   */
+
+
+  load(isLazy, reload) {
+    if (this.slide && this.usePlaceholder()) {
+      if (!this.placeholder) {
+        const placeholderSrc = this.instance.applyFilters('placeholderSrc', // use  image-based placeholder only for the first slide,
+        // as rendering (even small stretched thumbnail) is an expensive operation
+        this.data.msrc && this.slide.isFirstSlide ? this.data.msrc : false, this);
+        this.placeholder = new Placeholder(placeholderSrc, this.slide.container);
+      } else {
+        const placeholderEl = this.placeholder.element; // Add placeholder to DOM if it was already created
+
+        if (placeholderEl && !placeholderEl.parentElement) {
+          this.slide.container.prepend(placeholderEl);
+        }
+      }
+    }
+
+    if (this.element && !reload) {
+      return;
+    }
+
+    if (this.instance.dispatch('contentLoad', {
+      content: this,
+      isLazy
+    }).defaultPrevented) {
+      return;
+    }
+
+    if (this.isImageContent()) {
+      this.element = createElement('pswp__img', 'img'); // Start loading only after width is defined, as sizes might depend on it.
+      // Due to Safari feature, we must define sizes before srcset.
+
+      if (this.displayedImageWidth) {
+        this.loadImage(isLazy);
+      }
+    } else {
+      this.element = createElement('pswp__content', 'div');
+      this.element.innerHTML = this.data.html || '';
+    }
+
+    if (reload && this.slide) {
+      this.slide.updateContentSize(true);
+    }
+  }
+  /**
+   * Preload image
+   *
+   * @param {boolean} isLazy
+   */
+
+
+  loadImage(isLazy) {
+    var _this$data$src, _this$data$alt;
+
+    if (!this.isImageContent() || !this.element || this.instance.dispatch('contentLoadImage', {
+      content: this,
+      isLazy
+    }).defaultPrevented) {
+      return;
+    }
+
+    const imageElement =
+    /** @type HTMLImageElement */
+    this.element;
+    this.updateSrcsetSizes();
+
+    if (this.data.srcset) {
+      imageElement.srcset = this.data.srcset;
+    }
+
+    imageElement.src = (_this$data$src = this.data.src) !== null && _this$data$src !== void 0 ? _this$data$src : '';
+    imageElement.alt = (_this$data$alt = this.data.alt) !== null && _this$data$alt !== void 0 ? _this$data$alt : '';
+    this.state = LOAD_STATE.LOADING;
+
+    if (imageElement.complete) {
+      this.onLoaded();
+    } else {
+      imageElement.onload = () => {
+        this.onLoaded();
+      };
+
+      imageElement.onerror = () => {
+        this.onError();
+      };
+    }
+  }
+  /**
+   * Assign slide to content
+   *
+   * @param {Slide} slide
+   */
+
+
+  setSlide(slide) {
+    this.slide = slide;
+    this.hasSlide = true;
+    this.instance = slide.pswp; // todo: do we need to unset slide?
+  }
+  /**
+   * Content load success handler
+   */
+
+
+  onLoaded() {
+    this.state = LOAD_STATE.LOADED;
+
+    if (this.slide && this.element) {
+      this.instance.dispatch('loadComplete', {
+        slide: this.slide,
+        content: this
+      }); // if content is reloaded
+
+      if (this.slide.isActive && this.slide.heavyAppended && !this.element.parentNode) {
+        this.append();
+        this.slide.updateContentSize(true);
+      }
+
+      if (this.state === LOAD_STATE.LOADED || this.state === LOAD_STATE.ERROR) {
+        this.removePlaceholder();
+      }
+    }
+  }
+  /**
+   * Content load error handler
+   */
+
+
+  onError() {
+    this.state = LOAD_STATE.ERROR;
+
+    if (this.slide) {
+      this.displayError();
+      this.instance.dispatch('loadComplete', {
+        slide: this.slide,
+        isError: true,
+        content: this
+      });
+      this.instance.dispatch('loadError', {
+        slide: this.slide,
+        content: this
+      });
+    }
+  }
+  /**
+   * @returns {Boolean} If the content is currently loading
+   */
+
+
+  isLoading() {
+    return this.instance.applyFilters('isContentLoading', this.state === LOAD_STATE.LOADING, this);
+  }
+  /**
+   * @returns {Boolean} If the content is in error state
+   */
+
+
+  isError() {
+    return this.state === LOAD_STATE.ERROR;
+  }
+  /**
+   * @returns {boolean} If the content is image
+   */
+
+
+  isImageContent() {
+    return this.type === 'image';
+  }
+  /**
+   * Update content size
+   *
+   * @param {Number} width
+   * @param {Number} height
+   */
+
+
+  setDisplayedSize(width, height) {
+    if (!this.element) {
+      return;
+    }
+
+    if (this.placeholder) {
+      this.placeholder.setDisplayedSize(width, height);
+    }
+
+    if (this.instance.dispatch('contentResize', {
+      content: this,
+      width,
+      height
+    }).defaultPrevented) {
+      return;
+    }
+
+    setWidthHeight(this.element, width, height);
+
+    if (this.isImageContent() && !this.isError()) {
+      const isInitialSizeUpdate = !this.displayedImageWidth && width;
+      this.displayedImageWidth = width;
+      this.displayedImageHeight = height;
+
+      if (isInitialSizeUpdate) {
+        this.loadImage(false);
+      } else {
+        this.updateSrcsetSizes();
+      }
+
+      if (this.slide) {
+        this.instance.dispatch('imageSizeChange', {
+          slide: this.slide,
+          width,
+          height,
+          content: this
+        });
+      }
+    }
+  }
+  /**
+   * @returns {boolean} If the content can be zoomed
+   */
+
+
+  isZoomable() {
+    return this.instance.applyFilters('isContentZoomable', this.isImageContent() && this.state !== LOAD_STATE.ERROR, this);
+  }
+  /**
+   * Update image srcset sizes attribute based on width and height
+   */
+
+
+  updateSrcsetSizes() {
+    // Handle srcset sizes attribute.
+    //
+    // Never lower quality, if it was increased previously.
+    // Chrome does this automatically, Firefox and Safari do not,
+    // so we store largest used size in dataset.
+    if (!this.isImageContent() || !this.element || !this.data.srcset) {
+      return;
+    }
+
+    const image =
+    /** @type HTMLImageElement */
+    this.element;
+    const sizesWidth = this.instance.applyFilters('srcsetSizesWidth', this.displayedImageWidth, this);
+
+    if (!image.dataset.largestUsedSize || sizesWidth > parseInt(image.dataset.largestUsedSize, 10)) {
+      image.sizes = sizesWidth + 'px';
+      image.dataset.largestUsedSize = String(sizesWidth);
+    }
+  }
+  /**
+   * @returns {boolean} If content should use a placeholder (from msrc by default)
+   */
+
+
+  usePlaceholder() {
+    return this.instance.applyFilters('useContentPlaceholder', this.isImageContent(), this);
+  }
+  /**
+   * Preload content with lazy-loading param
+   */
+
+
+  lazyLoad() {
+    if (this.instance.dispatch('contentLazyLoad', {
+      content: this
+    }).defaultPrevented) {
+      return;
+    }
+
+    this.load(true);
+  }
+  /**
+   * @returns {boolean} If placeholder should be kept after content is loaded
+   */
+
+
+  keepPlaceholder() {
+    return this.instance.applyFilters('isKeepingPlaceholder', this.isLoading(), this);
+  }
+  /**
+   * Destroy the content
+   */
+
+
+  destroy() {
+    this.hasSlide = false;
+    this.slide = undefined;
+
+    if (this.instance.dispatch('contentDestroy', {
+      content: this
+    }).defaultPrevented) {
+      return;
+    }
+
+    this.remove();
+
+    if (this.placeholder) {
+      this.placeholder.destroy();
+      this.placeholder = undefined;
+    }
+
+    if (this.isImageContent() && this.element) {
+      this.element.onload = null;
+      this.element.onerror = null;
+      this.element = undefined;
+    }
+  }
+  /**
+   * Display error message
+   */
+
+
+  displayError() {
+    if (this.slide) {
+      var _this$instance$option, _this$instance$option2;
+
+      let errorMsgEl = createElement('pswp__error-msg', 'div');
+      errorMsgEl.innerText = (_this$instance$option = (_this$instance$option2 = this.instance.options) === null || _this$instance$option2 === void 0 ? void 0 : _this$instance$option2.errorMsg) !== null && _this$instance$option !== void 0 ? _this$instance$option : '';
+      errorMsgEl =
+      /** @type {HTMLDivElement} */
+      this.instance.applyFilters('contentErrorElement', errorMsgEl, this);
+      this.element = createElement('pswp__content pswp__error-msg-container', 'div');
+      this.element.appendChild(errorMsgEl);
+      this.slide.container.innerText = '';
+      this.slide.container.appendChild(this.element);
+      this.slide.updateContentSize(true);
+      this.removePlaceholder();
+    }
+  }
+  /**
+   * Append the content
+   */
+
+
+  append() {
+    if (this.isAttached || !this.element) {
+      return;
+    }
+
+    this.isAttached = true;
+
+    if (this.state === LOAD_STATE.ERROR) {
+      this.displayError();
+      return;
+    }
+
+    if (this.instance.dispatch('contentAppend', {
+      content: this
+    }).defaultPrevented) {
+      return;
+    }
+
+    const supportsDecode = ('decode' in this.element);
+
+    if (this.isImageContent()) {
+      // Use decode() on nearby slides
+      //
+      // Nearby slide images are in DOM and not hidden via display:none.
+      // However, they are placed offscreen (to the left and right side).
+      //
+      // Some browsers do not composite the image until it's actually visible,
+      // using decode() helps.
+      //
+      // You might ask "why dont you just decode() and then append all images",
+      // that's because I want to show image before it's fully loaded,
+      // as browser can render parts of image while it is loading.
+      // We do not do this in Safari due to partial loading bug.
+      if (supportsDecode && this.slide && (!this.slide.isActive || isSafari())) {
+        this.isDecoding = true; // purposefully using finally instead of then,
+        // as if srcset sizes changes dynamically - it may cause decode error
+
+        /** @type {HTMLImageElement} */
+
+        this.element.decode().catch(() => {}).finally(() => {
+          this.isDecoding = false;
+          this.appendImage();
+        });
+      } else {
+        this.appendImage();
+      }
+    } else if (this.slide && !this.element.parentNode) {
+      this.slide.container.appendChild(this.element);
+    }
+  }
+  /**
+   * Activate the slide,
+   * active slide is generally the current one,
+   * meaning the user can see it.
+   */
+
+
+  activate() {
+    if (this.instance.dispatch('contentActivate', {
+      content: this
+    }).defaultPrevented || !this.slide) {
+      return;
+    }
+
+    if (this.isImageContent() && this.isDecoding && !isSafari()) {
+      // add image to slide when it becomes active,
+      // even if it's not finished decoding
+      this.appendImage();
+    } else if (this.isError()) {
+      this.load(false, true); // try to reload
+    }
+
+    if (this.slide.holderElement) {
+      this.slide.holderElement.setAttribute('aria-hidden', 'false');
+    }
+  }
+  /**
+   * Deactivate the content
+   */
+
+
+  deactivate() {
+    this.instance.dispatch('contentDeactivate', {
+      content: this
+    });
+
+    if (this.slide && this.slide.holderElement) {
+      this.slide.holderElement.setAttribute('aria-hidden', 'true');
+    }
+  }
+  /**
+   * Remove the content from DOM
+   */
+
+
+  remove() {
+    this.isAttached = false;
+
+    if (this.instance.dispatch('contentRemove', {
+      content: this
+    }).defaultPrevented) {
+      return;
+    }
+
+    if (this.element && this.element.parentNode) {
+      this.element.remove();
+    }
+
+    if (this.placeholder && this.placeholder.element) {
+      this.placeholder.element.remove();
+    }
+  }
+  /**
+   * Append the image content to slide container
+   */
+
+
+  appendImage() {
+    if (!this.isAttached) {
+      return;
+    }
+
+    if (this.instance.dispatch('contentAppendImage', {
+      content: this
+    }).defaultPrevented) {
+      return;
+    } // ensure that element exists and is not already appended
+
+
+    if (this.slide && this.element && !this.element.parentNode) {
+      this.slide.container.appendChild(this.element);
+    }
+
+    if (this.state === LOAD_STATE.LOADED || this.state === LOAD_STATE.ERROR) {
+      this.removePlaceholder();
+    }
+  }
+
+}
+
+/** @typedef {import('../photoswipe.js').PhotoSwipeOptions} PhotoSwipeOptions */
+
+/** @typedef {import('../core/base.js').default} PhotoSwipeBase */
+
+/** @typedef {import('../photoswipe.js').Point} Point */
+
+/** @typedef {import('../slide/slide.js').SlideData} SlideData */
+
+/**
+ * @param {PhotoSwipeOptions} options
+ * @param {PhotoSwipeBase} pswp
+ * @returns {Point}
+ */
+function getViewportSize(options, pswp) {
+  if (options.getViewportSizeFn) {
+    const newViewportSize = options.getViewportSizeFn(options, pswp);
+
+    if (newViewportSize) {
+      return newViewportSize;
+    }
+  }
+
+  return {
+    x: document.documentElement.clientWidth,
+    // TODO: height on mobile is very incosistent due to toolbar
+    // find a way to improve this
+    //
+    // document.documentElement.clientHeight - doesn't seem to work well
+    y: window.innerHeight
+  };
+}
+/**
+ * Parses padding option.
+ * Supported formats:
+ *
+ * // Object
+ * padding: {
+ *  top: 0,
+ *  bottom: 0,
+ *  left: 0,
+ *  right: 0
+ * }
+ *
+ * // A function that returns the object
+ * paddingFn: (viewportSize, itemData, index) => {
+ *  return {
+ *    top: 0,
+ *    bottom: 0,
+ *    left: 0,
+ *    right: 0
+ *  };
+ * }
+ *
+ * // Legacy variant
+ * paddingLeft: 0,
+ * paddingRight: 0,
+ * paddingTop: 0,
+ * paddingBottom: 0,
+ *
+ * @param {'left' | 'top' | 'bottom' | 'right'} prop
+ * @param {PhotoSwipeOptions} options PhotoSwipe options
+ * @param {Point} viewportSize PhotoSwipe viewport size, for example: { x:800, y:600 }
+ * @param {SlideData} itemData Data about the slide
+ * @param {number} index Slide index
+ * @returns {number}
+ */
+
+function parsePaddingOption(prop, options, viewportSize, itemData, index) {
+  let paddingValue = 0;
+
+  if (options.paddingFn) {
+    paddingValue = options.paddingFn(viewportSize, itemData, index)[prop];
+  } else if (options.padding) {
+    paddingValue = options.padding[prop];
+  } else {
+    const legacyPropName = 'padding' + prop[0].toUpperCase() + prop.slice(1); // @ts-expect-error
+
+    if (options[legacyPropName]) {
+      // @ts-expect-error
+      paddingValue = options[legacyPropName];
+    }
+  }
+
+  return Number(paddingValue) || 0;
+}
+/**
+ * @param {PhotoSwipeOptions} options
+ * @param {Point} viewportSize
+ * @param {SlideData} itemData
+ * @param {number} index
+ * @returns {Point}
+ */
+
+function getPanAreaSize(options, viewportSize, itemData, index) {
+  return {
+    x: viewportSize.x - parsePaddingOption('left', options, viewportSize, itemData, index) - parsePaddingOption('right', options, viewportSize, itemData, index),
+    y: viewportSize.y - parsePaddingOption('top', options, viewportSize, itemData, index) - parsePaddingOption('bottom', options, viewportSize, itemData, index)
+  };
+}
+
+const MAX_IMAGE_WIDTH = 4000;
+/** @typedef {import('../photoswipe.js').default} PhotoSwipe */
+
+/** @typedef {import('../photoswipe.js').PhotoSwipeOptions} PhotoSwipeOptions */
+
+/** @typedef {import('../photoswipe.js').Point} Point */
+
+/** @typedef {import('../slide/slide.js').SlideData} SlideData */
+
+/** @typedef {'fit' | 'fill' | number | ((zoomLevelObject: ZoomLevel) => number)} ZoomLevelOption */
+
+/**
+ * Calculates zoom levels for specific slide.
+ * Depends on viewport size and image size.
+ */
+
+class ZoomLevel {
+  /**
+   * @param {PhotoSwipeOptions} options PhotoSwipe options
+   * @param {SlideData} itemData Slide data
+   * @param {number} index Slide index
+   * @param {PhotoSwipe} [pswp] PhotoSwipe instance, can be undefined if not initialized yet
+   */
+  constructor(options, itemData, index, pswp) {
+    this.pswp = pswp;
+    this.options = options;
+    this.itemData = itemData;
+    this.index = index;
+    /** @type { Point | null } */
+
+    this.panAreaSize = null;
+    /** @type { Point | null } */
+
+    this.elementSize = null;
+    this.fit = 1;
+    this.fill = 1;
+    this.vFill = 1;
+    this.initial = 1;
+    this.secondary = 1;
+    this.max = 1;
+    this.min = 1;
+  }
+  /**
+   * Calculate initial, secondary and maximum zoom level for the specified slide.
+   *
+   * It should be called when either image or viewport size changes.
+   *
+   * @param {number} maxWidth
+   * @param {number} maxHeight
+   * @param {Point} panAreaSize
+   */
+
+
+  update(maxWidth, maxHeight, panAreaSize) {
+    /** @type {Point} */
+    const elementSize = {
+      x: maxWidth,
+      y: maxHeight
+    };
+    this.elementSize = elementSize;
+    this.panAreaSize = panAreaSize;
+    const hRatio = panAreaSize.x / elementSize.x;
+    const vRatio = panAreaSize.y / elementSize.y;
+    this.fit = Math.min(1, hRatio < vRatio ? hRatio : vRatio);
+    this.fill = Math.min(1, hRatio > vRatio ? hRatio : vRatio); // zoom.vFill defines zoom level of the image
+    // when it has 100% of viewport vertical space (height)
+
+    this.vFill = Math.min(1, vRatio);
+    this.initial = this._getInitial();
+    this.secondary = this._getSecondary();
+    this.max = Math.max(this.initial, this.secondary, this._getMax());
+    this.min = Math.min(this.fit, this.initial, this.secondary);
+
+    if (this.pswp) {
+      this.pswp.dispatch('zoomLevelsUpdate', {
+        zoomLevels: this,
+        slideData: this.itemData
+      });
+    }
+  }
+  /**
+   * Parses user-defined zoom option.
+   *
+   * @private
+   * @param {'initial' | 'secondary' | 'max'} optionPrefix Zoom level option prefix (initial, secondary, max)
+   * @returns { number | undefined }
+   */
+
+
+  _parseZoomLevelOption(optionPrefix) {
+    const optionName =
+    /** @type {'initialZoomLevel' | 'secondaryZoomLevel' | 'maxZoomLevel'} */
+    optionPrefix + 'ZoomLevel';
+    const optionValue = this.options[optionName];
+
+    if (!optionValue) {
+      return;
+    }
+
+    if (typeof optionValue === 'function') {
+      return optionValue(this);
+    }
+
+    if (optionValue === 'fill') {
+      return this.fill;
+    }
+
+    if (optionValue === 'fit') {
+      return this.fit;
+    }
+
+    return Number(optionValue);
+  }
+  /**
+   * Get zoom level to which image will be zoomed after double-tap gesture,
+   * or when user clicks on zoom icon,
+   * or mouse-click on image itself.
+   * If you return 1 image will be zoomed to its original size.
+   *
+   * @private
+   * @return {number}
+   */
+
+
+  _getSecondary() {
+    let currZoomLevel = this._parseZoomLevelOption('secondary');
+
+    if (currZoomLevel) {
+      return currZoomLevel;
+    } // 3x of "fit" state, but not larger than original
+
+
+    currZoomLevel = Math.min(1, this.fit * 3);
+
+    if (this.elementSize && currZoomLevel * this.elementSize.x > MAX_IMAGE_WIDTH) {
+      currZoomLevel = MAX_IMAGE_WIDTH / this.elementSize.x;
+    }
+
+    return currZoomLevel;
+  }
+  /**
+   * Get initial image zoom level.
+   *
+   * @private
+   * @return {number}
+   */
+
+
+  _getInitial() {
+    return this._parseZoomLevelOption('initial') || this.fit;
+  }
+  /**
+   * Maximum zoom level when user zooms
+   * via zoom/pinch gesture,
+   * via cmd/ctrl-wheel or via trackpad.
+   *
+   * @private
+   * @return {number}
+   */
+
+
+  _getMax() {
+    // max zoom level is x4 from "fit state",
+    // used for zoom gesture and ctrl/trackpad zoom
+    return this._parseZoomLevelOption('max') || Math.max(1, this.fit * 4);
+  }
+
+}
+
+/**
+ * Lazy-load an image
+ * This function is used both by Lightbox and PhotoSwipe core,
+ * thus it can be called before dialog is opened.
+ *
+ * @param {SlideData} itemData Data about the slide
+ * @param {PhotoSwipeBase} instance PhotoSwipe or PhotoSwipeLightbox instance
+ * @param {number} index
+ * @returns {Content} Image that is being decoded or false.
+ */
+
+function lazyLoadData(itemData, instance, index) {
+  const content = instance.createContentFromData(itemData, index);
+  /** @type {ZoomLevel | undefined} */
+
+  let zoomLevel;
+  const {
+    options
+  } = instance; // We need to know dimensions of the image to preload it,
+  // as it might use srcset, and we need to define sizes
+
+  if (options) {
+    zoomLevel = new ZoomLevel(options, itemData, -1);
+    let viewportSize;
+
+    if (instance.pswp) {
+      viewportSize = instance.pswp.viewportSize;
+    } else {
+      viewportSize = getViewportSize(options, instance);
+    }
+
+    const panAreaSize = getPanAreaSize(options, viewportSize, itemData, index);
+    zoomLevel.update(content.width, content.height, panAreaSize);
+  }
+
+  content.lazyLoad();
+
+  if (zoomLevel) {
+    content.setDisplayedSize(Math.ceil(content.width * zoomLevel.initial), Math.ceil(content.height * zoomLevel.initial));
+  }
+
+  return content;
+}
+/**
+ * Lazy-loads specific slide.
+ * This function is used both by Lightbox and PhotoSwipe core,
+ * thus it can be called before dialog is opened.
+ *
+ * By default, it loads image based on viewport size and initial zoom level.
+ *
+ * @param {number} index Slide index
+ * @param {PhotoSwipeBase} instance PhotoSwipe or PhotoSwipeLightbox eventable instance
+ * @returns {Content | undefined}
+ */
+
+function lazyLoadSlide(index, instance) {
+  const itemData = instance.getItemData(index);
+
+  if (instance.dispatch('lazyLoadSlide', {
+    index,
+    itemData
+  }).defaultPrevented) {
+    return;
+  }
+
+  return lazyLoadData(itemData, instance, index);
+}
+
+/** @typedef {import("../photoswipe.js").default} PhotoSwipe */
+
+/** @typedef {import("../slide/slide.js").SlideData} SlideData */
+
+/**
+ * PhotoSwipe base class that can retrieve data about every slide.
+ * Shared by PhotoSwipe Core and PhotoSwipe Lightbox
+ */
+
+class PhotoSwipeBase extends Eventable {
+  /**
+   * Get total number of slides
+   *
+   * @returns {number}
+   */
+  getNumItems() {
+    var _this$options;
+
+    let numItems = 0;
+    const dataSource = (_this$options = this.options) === null || _this$options === void 0 ? void 0 : _this$options.dataSource;
+
+    if (dataSource && 'length' in dataSource) {
+      // may be an array or just object with length property
+      numItems = dataSource.length;
+    } else if (dataSource && 'gallery' in dataSource) {
+      // query DOM elements
+      if (!dataSource.items) {
+        dataSource.items = this._getGalleryDOMElements(dataSource.gallery);
+      }
+
+      if (dataSource.items) {
+        numItems = dataSource.items.length;
+      }
+    } // legacy event, before filters were introduced
+
+
+    const event = this.dispatch('numItems', {
+      dataSource,
+      numItems
+    });
+    return this.applyFilters('numItems', event.numItems, dataSource);
+  }
+  /**
+   * @param {SlideData} slideData
+   * @param {number} index
+   * @returns {Content}
+   */
+
+
+  createContentFromData(slideData, index) {
+    return new Content(slideData, this, index);
+  }
+  /**
+   * Get item data by index.
+   *
+   * "item data" should contain normalized information that PhotoSwipe needs to generate a slide.
+   * For example, it may contain properties like
+   * `src`, `srcset`, `w`, `h`, which will be used to generate a slide with image.
+   *
+   * @param {number} index
+   * @returns {SlideData}
+   */
+
+
+  getItemData(index) {
+    var _this$options2;
+
+    const dataSource = (_this$options2 = this.options) === null || _this$options2 === void 0 ? void 0 : _this$options2.dataSource;
+    /** @type {SlideData | HTMLElement} */
+
+    let dataSourceItem = {};
+
+    if (Array.isArray(dataSource)) {
+      // Datasource is an array of elements
+      dataSourceItem = dataSource[index];
+    } else if (dataSource && 'gallery' in dataSource) {
+      // dataSource has gallery property,
+      // thus it was created by Lightbox, based on
+      // gallery and children options
+      // query DOM elements
+      if (!dataSource.items) {
+        dataSource.items = this._getGalleryDOMElements(dataSource.gallery);
+      }
+
+      dataSourceItem = dataSource.items[index];
+    }
+
+    let itemData = dataSourceItem;
+
+    if (itemData instanceof Element) {
+      itemData = this._domElementToItemData(itemData);
+    } // Dispatching the itemData event,
+    // it's a legacy verion before filters were introduced
+
+
+    const event = this.dispatch('itemData', {
+      itemData: itemData || {},
+      index
+    });
+    return this.applyFilters('itemData', event.itemData, index);
+  }
+  /**
+   * Get array of gallery DOM elements,
+   * based on childSelector and gallery element.
+   *
+   * @param {HTMLElement} galleryElement
+   * @returns {HTMLElement[]}
+   */
+
+
+  _getGalleryDOMElements(galleryElement) {
+    var _this$options3, _this$options4;
+
+    if ((_this$options3 = this.options) !== null && _this$options3 !== void 0 && _this$options3.children || (_this$options4 = this.options) !== null && _this$options4 !== void 0 && _this$options4.childSelector) {
+      return getElementsFromOption(this.options.children, this.options.childSelector, galleryElement) || [];
+    }
+
+    return [galleryElement];
+  }
+  /**
+   * Converts DOM element to item data object.
+   *
+   * @param {HTMLElement} element DOM element
+   * @returns {SlideData}
+   */
+
+
+  _domElementToItemData(element) {
+    /** @type {SlideData} */
+    const itemData = {
+      element
+    };
+    const linkEl =
+    /** @type {HTMLAnchorElement} */
+    element.tagName === 'A' ? element : element.querySelector('a');
+
+    if (linkEl) {
+      // src comes from data-pswp-src attribute,
+      // if it's empty link href is used
+      itemData.src = linkEl.dataset.pswpSrc || linkEl.href;
+
+      if (linkEl.dataset.pswpSrcset) {
+        itemData.srcset = linkEl.dataset.pswpSrcset;
+      }
+
+      itemData.width = linkEl.dataset.pswpWidth ? parseInt(linkEl.dataset.pswpWidth, 10) : 0;
+      itemData.height = linkEl.dataset.pswpHeight ? parseInt(linkEl.dataset.pswpHeight, 10) : 0; // support legacy w & h properties
+
+      itemData.w = itemData.width;
+      itemData.h = itemData.height;
+
+      if (linkEl.dataset.pswpType) {
+        itemData.type = linkEl.dataset.pswpType;
+      }
+
+      const thumbnailEl = element.querySelector('img');
+
+      if (thumbnailEl) {
+        var _thumbnailEl$getAttri;
+
+        // msrc is URL to placeholder image that's displayed before large image is loaded
+        // by default it's displayed only for the first slide
+        itemData.msrc = thumbnailEl.currentSrc || thumbnailEl.src;
+        itemData.alt = (_thumbnailEl$getAttri = thumbnailEl.getAttribute('alt')) !== null && _thumbnailEl$getAttri !== void 0 ? _thumbnailEl$getAttri : '';
+      }
+
+      if (linkEl.dataset.pswpCropped || linkEl.dataset.cropped) {
+        itemData.thumbCropped = true;
+      }
+    }
+
+    return this.applyFilters('domItemData', itemData, element, linkEl);
+  }
+  /**
+   * Lazy-load by slide data
+   *
+   * @param {SlideData} itemData Data about the slide
+   * @param {number} index
+   * @returns {Content} Image that is being decoded or false.
+   */
+
+
+  lazyLoadData(itemData, index) {
+    return lazyLoadData(itemData, this, index);
+  }
+
+}
+
+/**
+ * @template T
+ * @typedef {import('../types.js').Type<T>} Type<T>
+ */
+
+/** @typedef {import('../photoswipe.js').default} PhotoSwipe */
+
+/** @typedef {import('../photoswipe.js').PhotoSwipeOptions} PhotoSwipeOptions */
+
+/** @typedef {import('../photoswipe.js').DataSource} DataSource */
+
+/** @typedef {import('../photoswipe.js').Point} Point */
+
+/** @typedef {import('../slide/content.js').default} Content */
+
+/** @typedef {import('../core/eventable.js').PhotoSwipeEventsMap} PhotoSwipeEventsMap */
+
+/** @typedef {import('../core/eventable.js').PhotoSwipeFiltersMap} PhotoSwipeFiltersMap */
+
+/**
+ * @template {keyof PhotoSwipeEventsMap} T
+ * @typedef {import('../core/eventable.js').EventCallback<T>} EventCallback<T>
+ */
+
+/**
+ * PhotoSwipe Lightbox
+ *
+ * - If user has unsupported browser it falls back to default browser action (just opens URL)
+ * - Binds click event to links that should open PhotoSwipe
+ * - parses DOM strcture for PhotoSwipe (retrieves large image URLs and sizes)
+ * - Initializes PhotoSwipe
+ *
+ *
+ * Loader options use the same object as PhotoSwipe, and supports such options:
+ *
+ * gallery - Element | Element[] | NodeList | string selector for the gallery element
+ * children - Element | Element[] | NodeList | string selector for the gallery children
+ *
+ */
+
+class PhotoSwipeLightbox extends PhotoSwipeBase {
+  /**
+   * @param {PhotoSwipeOptions} [options]
+   */
+  constructor(options) {
+    super();
+    /** @type {PhotoSwipeOptions} */
+
+    this.options = options || {};
+    this._uid = 0;
+    this.shouldOpen = false;
+    /**
+     * @private
+     * @type {Content | undefined}
+     */
+
+    this._preloadedContent = undefined;
+    this.onThumbnailsClick = this.onThumbnailsClick.bind(this);
+  }
+  /**
+   * Initialize lightbox, should be called only once.
+   * It's not included in the main constructor, so you may bind events before it.
+   */
+
+
+  init() {
+    // Bind click events to each gallery
+    getElementsFromOption(this.options.gallery, this.options.gallerySelector).forEach(galleryElement => {
+      galleryElement.addEventListener('click', this.onThumbnailsClick, false);
+    });
+  }
+  /**
+   * @param {MouseEvent} e
+   */
+
+
+  onThumbnailsClick(e) {
+    // Exit and allow default browser action if:
+    if (specialKeyUsed(e) // ... if clicked with a special key (ctrl/cmd...)
+    || window.pswp) {
+      // ... if PhotoSwipe is already open
+      return;
+    } // If both clientX and clientY are 0 or not defined,
+    // the event is likely triggered by keyboard,
+    // so we do not pass the initialPoint
+    //
+    // Note that some screen readers emulate the mouse position,
+    // so it's not the ideal way to detect them.
+    //
+
+    /** @type {Point | null} */
+
+
+    let initialPoint = {
+      x: e.clientX,
+      y: e.clientY
+    };
+
+    if (!initialPoint.x && !initialPoint.y) {
+      initialPoint = null;
+    }
+
+    let clickedIndex = this.getClickedIndex(e);
+    clickedIndex = this.applyFilters('clickedIndex', clickedIndex, e, this);
+    /** @type {DataSource} */
+
+    const dataSource = {
+      gallery:
+      /** @type {HTMLElement} */
+      e.currentTarget
+    };
+
+    if (clickedIndex >= 0) {
+      e.preventDefault();
+      this.loadAndOpen(clickedIndex, dataSource, initialPoint);
+    }
+  }
+  /**
+   * Get index of gallery item that was clicked.
+   *
+   * @param {MouseEvent} e click event
+   * @returns {number}
+   */
+
+
+  getClickedIndex(e) {
+    // legacy option
+    if (this.options.getClickedIndexFn) {
+      return this.options.getClickedIndexFn.call(this, e);
+    }
+
+    const clickedTarget =
+    /** @type {HTMLElement} */
+    e.target;
+    const childElements = getElementsFromOption(this.options.children, this.options.childSelector,
+    /** @type {HTMLElement} */
+    e.currentTarget);
+    const clickedChildIndex = childElements.findIndex(child => child === clickedTarget || child.contains(clickedTarget));
+
+    if (clickedChildIndex !== -1) {
+      return clickedChildIndex;
+    } else if (this.options.children || this.options.childSelector) {
+      // click wasn't on a child element
+      return -1;
+    } // There is only one item (which is the gallery)
+
+
+    return 0;
+  }
+  /**
+   * Load and open PhotoSwipe
+   *
+   * @param {number} index
+   * @param {DataSource} [dataSource]
+   * @param {Point | null} [initialPoint]
+   * @returns {boolean}
+   */
+
+
+  loadAndOpen(index, dataSource, initialPoint) {
+    // Check if the gallery is already open
+    if (window.pswp || !this.options) {
+      return false;
+    } // Use the first gallery element if dataSource is not provided
+
+
+    if (!dataSource && this.options.gallery && this.options.children) {
+      const galleryElements = getElementsFromOption(this.options.gallery);
+
+      if (galleryElements[0]) {
+        dataSource = {
+          gallery: galleryElements[0]
+        };
+      }
+    } // set initial index
+
+
+    this.options.index = index; // define options for PhotoSwipe constructor
+
+    this.options.initialPointerPos = initialPoint;
+    this.shouldOpen = true;
+    this.preload(index, dataSource);
+    return true;
+  }
+  /**
+   * Load the main module and the slide content by index
+   *
+   * @param {number} index
+   * @param {DataSource} [dataSource]
+   */
+
+
+  preload(index, dataSource) {
+    const {
+      options
+    } = this;
+
+    if (dataSource) {
+      options.dataSource = dataSource;
+    } // Add the main module
+
+    /** @type {Promise<Type<PhotoSwipe>>[]} */
+
+
+    const promiseArray = [];
+    const pswpModuleType = typeof options.pswpModule;
+
+    if (isPswpClass(options.pswpModule)) {
+      promiseArray.push(Promise.resolve(
+      /** @type {Type<PhotoSwipe>} */
+      options.pswpModule));
+    } else if (pswpModuleType === 'string') {
+      throw new Error('pswpModule as string is no longer supported');
+    } else if (pswpModuleType === 'function') {
+      promiseArray.push(
+      /** @type {() => Promise<Type<PhotoSwipe>>} */
+      options.pswpModule());
+    } else {
+      throw new Error('pswpModule is not valid');
+    } // Add custom-defined promise, if any
+
+
+    if (typeof options.openPromise === 'function') {
+      // allow developers to perform some task before opening
+      promiseArray.push(options.openPromise());
+    }
+
+    if (options.preloadFirstSlide !== false && index >= 0) {
+      this._preloadedContent = lazyLoadSlide(index, this);
+    } // Wait till all promises resolve and open PhotoSwipe
+
+
+    const uid = ++this._uid;
+    Promise.all(promiseArray).then(iterableModules => {
+      if (this.shouldOpen) {
+        const mainModule = iterableModules[0];
+
+        this._openPhotoswipe(mainModule, uid);
+      }
+    });
+  }
+  /**
+   * @private
+   * @param {Type<PhotoSwipe> | { default: Type<PhotoSwipe> }} module
+   * @param {number} uid
+   */
+
+
+  _openPhotoswipe(module, uid) {
+    // Cancel opening if UID doesn't match the current one
+    // (if user clicked on another gallery item before current was loaded).
+    //
+    // Or if shouldOpen flag is set to false
+    // (developer may modify it via public API)
+    if (uid !== this._uid && this.shouldOpen) {
+      return;
+    }
+
+    this.shouldOpen = false; // PhotoSwipe is already open
+
+    if (window.pswp) {
+      return;
+    }
+    /**
+     * Pass data to PhotoSwipe and open init
+     *
+     * @type {PhotoSwipe}
+     */
+
+
+    const pswp = typeof module === 'object' ? new module.default(this.options) // eslint-disable-line
+    : new module(this.options); // eslint-disable-line
+
+    this.pswp = pswp;
+    window.pswp = pswp; // map listeners from Lightbox to PhotoSwipe Core
+
+    /** @type {(keyof PhotoSwipeEventsMap)[]} */
+
+    Object.keys(this._listeners).forEach(name => {
+      var _this$_listeners$name;
+
+      (_this$_listeners$name = this._listeners[name]) === null || _this$_listeners$name === void 0 || _this$_listeners$name.forEach(fn => {
+        pswp.on(name,
+        /** @type {EventCallback<typeof name>} */
+        fn);
+      });
+    }); // same with filters
+
+    /** @type {(keyof PhotoSwipeFiltersMap)[]} */
+
+    Object.keys(this._filters).forEach(name => {
+      var _this$_filters$name;
+
+      (_this$_filters$name = this._filters[name]) === null || _this$_filters$name === void 0 || _this$_filters$name.forEach(filter => {
+        pswp.addFilter(name, filter.fn, filter.priority);
+      });
+    });
+
+    if (this._preloadedContent) {
+      pswp.contentLoader.addToCache(this._preloadedContent);
+      this._preloadedContent = undefined;
+    }
+
+    pswp.on('destroy', () => {
+      // clean up public variables
+      this.pswp = undefined;
+      delete window.pswp;
+    });
+    pswp.init();
+  }
+  /**
+   * Unbinds all events, closes PhotoSwipe if it's open.
+   */
+
+
+  destroy() {
+    var _this$pswp;
+
+    (_this$pswp = this.pswp) === null || _this$pswp === void 0 || _this$pswp.destroy();
+    this.shouldOpen = false;
+    this._listeners = {};
+    getElementsFromOption(this.options.gallery, this.options.gallerySelector).forEach(galleryElement => {
+      galleryElement.removeEventListener('click', this.onThumbnailsClick, false);
+    });
+  }
+
+}
+
+
+//# sourceMappingURL=photoswipe-lightbox.esm.js.map
+
+
 /***/ })
 
 /******/ 	});
@@ -15562,7 +18395,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
+/******/ 			id: moduleId,
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
@@ -15634,9 +18467,88 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames not based on template
+/******/ 			if (chunkId === "node_modules_photoswipe_dist_photoswipe_esm_js") return "js/" + chunkId + ".js";
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference all chunks
+/******/ 		__webpack_require__.miniCssF = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + ".css";
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "my-app:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
@@ -15648,6 +18560,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "/";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
@@ -15662,7 +18579,44 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 			"css/app": 0
 /******/ 		};
 /******/ 		
-/******/ 		// no chunk on demand loading
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if("css/app" != chunkId) {
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 					}
+/******/ 				}
+/******/ 		};
 /******/ 		
 /******/ 		// no prefetching
 /******/ 		
@@ -15702,6 +18656,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 		var chunkLoadingGlobal = self["webpackChunkmy_app"] = self["webpackChunkmy_app"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/nonce */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nc = undefined;
 /******/ 	})();
 /******/ 	
 /************************************************************************/

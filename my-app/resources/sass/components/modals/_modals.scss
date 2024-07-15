@@ -21,6 +21,16 @@
       padding: 3.5rem;
     }
   }
+  &__subtitle {
+    display: block;
+    padding: 1rem 3.5rem;
+    color: #292929;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 145%;
+  }
   &.open {
     display: block;
     position: fixed;
@@ -34,12 +44,30 @@
     align-items: center;
     justify-content: center;
     right: 1rem;
-    top: 4rem;
+    top: 1rem;
+    @media (max-width: 767px){
+      top: 4rem;
+
+    }
     width: 2rem;
     height: 2rem;
     cursor: pointer;
     font-size: 3rem;
   }
+  .contact-form {
+    width: 100%;
+  }
+  .wpcf7 {
+    padding: 3rem 3.5rem;
+    padding-top: 0;
+    .wpcf7-form-control-wrap {
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+.purchase-window {
+  max-width: 60rem;
 }
 
 .order {

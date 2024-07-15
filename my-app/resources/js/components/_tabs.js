@@ -1,3 +1,4 @@
+import {offspringScheme} from "./_offspring-scheme";
 export default function tabs() {
     $(document).on('click', '.tabs-head__item', function (e) {
         e.preventDefault();
@@ -10,5 +11,6 @@ export default function tabs() {
         $wrapper.find('.tabs-content').removeClass('active');
         $t.addClass('active');
         $wrapper.find('.tabs-content' + href).addClass('active');
+        offspringScheme()
     });
 }

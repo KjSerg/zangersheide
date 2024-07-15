@@ -20,6 +20,7 @@
     "browser-sync-webpack-plugin": "^2.3.0",
     "fancybox": "^3.0.1",
     "jquery": "^3.7.1",
+    "photoswipe": "^5.4.4",
     "selectric": "^1.13.0",
     "slick-carousel": "^1.8.1",
     "slick-slider": "^1.8.2"

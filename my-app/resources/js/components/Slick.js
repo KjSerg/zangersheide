@@ -46,22 +46,41 @@ export default class Slick {
         let args = {
             slidesToShow: 1,
             dots: true,
+            infinite: false,
             arrows: true
         };
         let argsNav = {
             slidesToShow: 4,
             arrows: false,
             focusOnSelect: true,
-            // centerMode: true,
+            infinite: false,
+            responsive: [
+                {
+                    breakpoint: 1371,
+                    settings: {
+                        slidesToShow: 3,
+                    }
+                },
+            ]
         };
         $(document).find('.product-gallery').each(function () {
             const $slider = $(this);
             const $wrapper = $slider.closest('.product-gallery-wrapper');
             const $nav = $wrapper.find('.product-gallery-preview');
             if ($nav.length > 0) {
-                args.asNavFor = $nav;
-                argsNav.asNavFor = $slider;
-                $nav.slick(argsNav);
+                let $slides = $wrapper.find('.product-gallery-preview > *');
+                if($slides.length < 4){
+                    $nav.addClass('center-mode');
+                    argsNav.slidesToShow = 2;
+                }
+                if($slides.length > 1){
+                    args.asNavFor = $nav;
+                    argsNav.asNavFor = $slider;
+                    $nav.slick(argsNav);
+                }else {
+                    $nav.remove()
+                }
+
             }
             $slider.slick(args);
         });

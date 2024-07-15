@@ -162,7 +162,6 @@
     &-label {
       width: 41rem;
       max-width: 32%;
-      margin-right: 2rem;
       input {
         width: 100%;
         border: 1px solid rgba(97, 102, 124, 0.20);
@@ -175,10 +174,10 @@
         line-height: normal;
       }
       @media (max-width: 690px){
-        width: 100%;
-        max-width: 100%;
-        margin-right: 0;
-        margin-bottom: 1rem;
+          width: 100%;
+          max-width: 100%;
+          margin-right: 0;
+          margin-bottom: 1rem;
       }
     }
     &-row {
@@ -186,6 +185,12 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 2rem;
+      & > * {
+        margin-right: 2rem;
+        @media (max-width: 690px){
+          margin-right: 0;
+        }
+      }
       @media (max-width: 690px){
         flex-direction: column;
       }

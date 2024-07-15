@@ -52,7 +52,7 @@ main.content {
   flex: 1;
 }
 
-img, svg {
+img:not(.pswp__img), svg {
   max-width: 100%;
   max-height: 100%;
   width: auto;
@@ -151,10 +151,20 @@ section {
     justify-content: center;
     padding: 1.9rem;
     width: 5.8rem;
-    height: 5.8rem;
+    min-height: 5.8rem;
     flex-shrink: 0;
     background: #216A8F;
-
+    &.active {
+      background: rgba(179,202,230,.2);
+      svg path {
+        fill:  #092939;
+      }
+      &:hover {
+        svg path {
+          fill: #216A8F;
+        }
+      }
+    }
     &:hover {
       background-color: #092939;
     }
@@ -476,7 +486,7 @@ em, i {
       flex-shrink: 0;
       top: 6rem;
       left: 20%;
-      background-image: url(../../../img/quote.svg);
+      background-image: url(/wp-content/themes/zangersheide/assets/img/quote.svg);
       background-size: contain;
       background-position: center;
       @media (max-width: 1615px) {
@@ -533,6 +543,11 @@ em, i {
       }
     }
   }
+
+
+}
+strong {
+  font-weight: bold;
 }
 
 .modal-window.player-window {
@@ -620,5 +635,101 @@ input[type="checkbox"]:checked {
     width: 5rem;
     height: 5rem;
     flex-shrink: 0;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.wpcf7-not-valid-tip, .wpcf7-response-output {
+  display: none !important;
+}
+
+.wpcf7-not-valid {
+  color: red !important;
+  border-color: red !important;
+}
+
+.wpcf7-not-valid::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: red !important;
+}
+
+.wpcf7-not-valid::-moz-placeholder { /* Firefox 19+ */
+  color: red !important;
+}
+
+.wpcf7-not-valid:-ms-input-placeholder { /* IE 10+ */
+  color: red !important;
+}
+
+.wpcf7-not-valid:-moz-placeholder { /* Firefox 18- */
+  color: red !important;
+}
+
+.wpcf7-form.unaccepted .mf4v_checker_text {
+  color: red !important;
+}
+
+span.wpcf7-list-item {
+  margin: 0 !important;
+}
+
+.mfv_checker_label .wpcf7-form-control-wrap {
+  display: none;
+}
+
+.wpcf7-form-control-wrap {
+  display: block;
+}
+
+.wpcf7-form.unaccepted  {
+  color: red!important;
+}
+
+.wpcf7-list-item {
+  display: flex;
+  line-height: 2.7rem;
+}
+.wpcf7 {
+
+}
+
+
+.preloader img {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+.preloader {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 2rem;
+  background-color: rgba(0, 122, 255, .1);
+  opacity: 0;
+  transition: 0.1s ease;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.preloader.active {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  z-index: 20;
+}
+
+.form-group.error {
+  .selectric {
+    border-color: red;
   }
 }
